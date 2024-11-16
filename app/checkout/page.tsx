@@ -10,19 +10,30 @@ export default function CheckoutPage() {
 
   // 在這裡加入處理有效期限的函數
   const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/\D/g, '');
+    let input = e.target.value;
     
-    if (value.length >= 2) {
-      const month = value.slice(0, 2);
-      if (parseInt(month) > 12) {
-        value = '12' + value.slice(2);
+    // 如果是在刪除
+    if (input.length < expiry.length) {
+      // 如果刪除到只剩 "/" 就直接清空
+      if (input === '/') {
+        input = '';
       }
-      value = value.slice(0, 2) + '/' + value.slice(2, 4);
+      // 如果刪到最後一個數字，同時移除斜線
+      else if (input.length === 2 && expiry.length === 3) {
+        input = input.slice(0, -1);
+      }
+    } 
+    // 如果是在輸入
+    else {
+      // 自動加入斜線
+      if (input.length === 2 && !input.includes('/')) {
+        input = input + '/';
+      }
+      // 只允許數字
+      input = input.replace(/[^\d/]/g, '');
     }
     
-    if (value.length <= 5) {
-      setExpiry(value);
-    }
+    setExpiry(input);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -96,7 +107,7 @@ export default function CheckoutPage() {
                   required
                   pattern="\d{3}"
                   maxLength={3}
-                  placeholder="輸入信用卡末三碼"
+                  placeholder="信用卡末三碼"
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
                 />
               </div>
