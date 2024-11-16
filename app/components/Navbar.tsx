@@ -20,6 +20,7 @@ const productCategories = [
   { title: '評論分析', link: '/analysis' },
   { title: '資料爬取', link: '/scraper' },
   { title: '定價方案', link: '/pricing' },
+  { title: '學習中心', link: '/learn' },
 ];
 
 interface NavbarProps {
@@ -168,6 +169,12 @@ export default function Navbar({}: NavbarProps) {
                 className="hidden md:block px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
               >
                 定價
+              </Link>
+              <Link 
+                href="/learn" 
+                className="hidden md:block px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
+              >
+                學習中心
               </Link>
             </div>
 

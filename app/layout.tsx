@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'zh_TW',
-    url: 'https://your-domain.com',
+    url: 'https://app-reviews-ai-v2.vercel.app',
     title: 'APP評論分析平台',
     description: '整合 Apple Store 與 Google Play 的評論數據，提供深入的用戶反饋分析',
     siteName: 'APP評論分析平台'
