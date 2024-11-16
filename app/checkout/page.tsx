@@ -74,7 +74,8 @@ export default function CheckoutPage() {
                 信用卡號碼
               </label>
               <input
-                type="text"
+                type="tel"
+                inputMode="numeric"
                 required
                 pattern="\d{16}"
                 maxLength={16}
@@ -85,11 +86,12 @@ export default function CheckoutPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-              <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-700">
                   有效期限
                 </label>
                 <input
-                  type="text"
+                  type="tel"
+                  inputMode="numeric"
                   required
                   value={expiry}
                   onChange={handleExpiryChange}
@@ -103,7 +105,8 @@ export default function CheckoutPage() {
                   CVC/CVV
                 </label>
                 <input
-                  type="text"
+                  type="tel"
+                  inputMode="numeric"
                   required
                   pattern="\d{3}"
                   maxLength={3}
