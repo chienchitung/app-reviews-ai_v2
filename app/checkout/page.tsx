@@ -6,7 +6,30 @@ import { useRouter } from 'next/navigation';
 export default function CheckoutPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [expiry, setExpiry] = useState(''); // 新增這行來管理有效期限的狀態
+  const [expiry, setExpiry] = useState('');
+  const [cardNumber, setCardNumber] = useState('');
+
+  // 處理信用卡號碼格式化
+  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let input = e.target.value;
+    
+    // 移除所有非數字字符
+    input = input.replace(/\D/g, '');
+    
+    // 加入空格
+    let formatted = '';
+    for (let i = 0; i < input.length; i++) {
+      if (i > 0 && i % 4 === 0) {
+        formatted += ' ';
+      }
+      formatted += input[i];
+    }
+    
+    // 限制長度為19（16位數字 + 3個空格）
+    if (formatted.length <= 19) {
+      setCardNumber(formatted);
+    }
+  };
 
   // 在這裡加入處理有效期限的函數
   const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,13 +59,22 @@ export default function CheckoutPage() {
     setExpiry(input);
   };
 
+  // 在提交表單時移除空格進行驗證
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     
+    // 移除信用卡號碼中的空格進行驗證
+    const cleanCardNumber = cardNumber.replace(/\s/g, '');
+    if (cleanCardNumber.length !== 16) {
+      alert('請輸入16位數信用卡號碼');
+      setLoading(false);
+      return;
+    }
+
     try {
       // 這裡處理付款邏輯
-      await new Promise(resolve => setTimeout(resolve, 1500)); // 模擬 API 請求
+      await new Promise(resolve => setTimeout(resolve, 1500));
       router.push('/payment/success');
     } catch (error) {
       console.error('付款錯誤:', error);
@@ -77,8 +109,8 @@ export default function CheckoutPage() {
                 type="tel"
                 inputMode="numeric"
                 required
-                pattern="\d{16}"
-                maxLength={16}
+                value={cardNumber}
+                onChange={handleCardNumberChange}
                 placeholder="1234 5678 9012 3456"
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
               />
