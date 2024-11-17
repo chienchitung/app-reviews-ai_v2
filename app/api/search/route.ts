@@ -37,7 +37,18 @@ export async function POST(request: Request): Promise<Response> {
     }
 
     const data = await response.json();
-    return NextResponse.json({ data: data.data });
+    if (!data || data.length === 0) {
+      return NextResponse.json({
+        success: true,
+        data: [],
+        message: "找不到相關應用程式"
+      });
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: data.data
+    });
 
   } catch (error) {
     console.error('Search error:', error);
