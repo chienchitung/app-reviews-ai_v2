@@ -213,7 +213,7 @@ export default function AnalysisPage() {
                 <li>評論分類與情感傾向</li>
                 <li>關鍵詞提取與統計</li>
                 <li>文字雲視覺化</li>
-                <li>整體情感布分析</li>
+                <li>整體情感分布分析</li>
               </ul>
               <p>4. 分析完成後可生成詳細洞察報告</p>
             </div>
