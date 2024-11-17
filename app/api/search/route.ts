@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { spawn } from 'child_process';
 import path from 'path';
 
-export async function POST(request: Request) {
+export async function POST(request: Request): Promise<Response> {
   try {
     const { searchTerm } = await request.json();
 
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     
     const pythonProcess = spawn('python', [scriptPath, searchTerm]);
 
-    return new Promise((resolve) => {
+    return new Promise<Response>((resolve) => {
       let dataString = '';
 
       pythonProcess.stdout.on('data', (data) => {
