@@ -75,6 +75,11 @@ export default function RootLayout({
                         資料爬取
                       </Link>
                     </li>
+                    <li>
+                      <Link href="/learn" className="text-gray-400 hover:text-white text-sm">
+                        學習中心
+                      </Link>
+                    </li>
                   </ul>
                 </div>
                 

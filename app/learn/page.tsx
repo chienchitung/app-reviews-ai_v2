@@ -51,10 +51,9 @@ export default function LearnCenter() {
                   />
                 </div>
                 <ul className="list-disc list-outside ml-5 space-y-3 text-gray-600 text-sm sm:text-base">
-                  <li className="leading-relaxed">登入您的帳戶並進入評論分析頁面</li>
-                  <li className="leading-relaxed">選擇您要分析的應用程式</li>
-                  <li className="leading-relaxed">設定分析時間範圍</li>
-                  <li className="leading-relaxed">選擇需要的分析維度（情感分析、關鍵字分析等）</li>
+                  <li className="leading-relaxed">進入評論分析頁面</li>
+                  <li className="leading-relaxed">上傳評論的原始資料</li>
+                  <li className="leading-relaxed">點擊「開始分析」</li>
                 </ul>
               </div>
             )}
@@ -125,8 +124,9 @@ export default function LearnCenter() {
                   />
                 </div>
                 <ul className="list-disc list-outside ml-5 space-y-3 text-gray-600 text-sm sm:text-base">
-                  <li className="leading-relaxed">輸入目標應用程式的商店連結</li>
-                  <li className="leading-relaxed">爬取頻率（單次）</li>
+                  <li className="leading-relaxed">輸入目標應用程式的名稱</li>
+                  <li className="leading-relaxed">確認應用程式的名稱是否正確</li>
+                  <li className="leading-relaxed">點擊「開始爬取」，等待爬取完成</li>
                 </ul>
               </div>
             )}
