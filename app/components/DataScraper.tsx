@@ -61,7 +61,7 @@ export default function DataScraper() {
       }
 
       setReviews(result.data);
-      setMessage('爬蟲完成!');
+      setMessage('爬取完成!');
       
     } catch (error) {
       console.error('爬蟲錯誤:', error);

@@ -43,7 +43,7 @@ const SYSTEM_PROMPT = `你是一個專業的APP評論分析平台助手，具備
 4. 適時主動提供延伸建議
 5. 如遇不明確的問題，主動詢問細節
 6. 不要在回答中提及或說明目前使用哪種角色
-7. 不要在回答中提及或說明目前使用哪種能力
+7. 不要在回答中提及或說明目前使用哪種專業能力
 8. 回答內容不要有 " * "符號
 
 請根據用戶的問題自動判斷使用適合的回答方式，若用戶詢問的問題與平台不相關，請委婉回覆無法解答。`;
@@ -151,6 +151,7 @@ const QUICK_QUESTIONS: QuickQuestion[] = [
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isQuickQuestionsOpen, setIsQuickQuestionsOpen] = useState(true);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
@@ -265,8 +266,10 @@ ${inputMessage}
             <h3 className="text-lg font-semibold">AI小助手</h3>
           </div>
 
-          {/* 聊天訊息區域 */}
-          <div className="h-[320px] overflow-y-auto p-4">
+          {/* 聊天訊息區域 - 調整高度以適應快速問題區域的狀態 */}
+          <div className={`overflow-y-auto p-4 transition-all duration-300 ${
+            isQuickQuestionsOpen ? 'h-[320px]' : 'h-[380px]'
+          }`}>
             <div className="space-y-4">
               {messages.map((message, index) => (
                 <div key={index} className={`flex items-start ${message.role === 'user' ? 'justify-end' : ''}`}>
@@ -289,43 +292,78 @@ ${inputMessage}
             </div>
           </div>
 
-          {/* 快速問題區域 - 更新設計 */}
-          <div className="px-4 py-3 border-t border-gray-200">
-            <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
-              {QUICK_QUESTIONS.map((item, index) => (
-                <div key={index} className="flex items-center group">
-                  <button
-                    onClick={() => handleQuickQuestion(item)}
-                    disabled={isLoading}
-                    className={`
-                      bg-gray-50 hover:bg-gray-100 
-                      text-gray-700 text-sm 
-                      px-4 py-2 
-                      rounded-lg 
-                      transition-colors duration-200 
-                      flex items-center gap-2
-                      border border-gray-200 hover:border-gray-300
-                      ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
-                    `}
-                  >
-                    <span>{item.text}</span>
-                    <svg 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      className="h-4 w-4 text-gray-400 group-hover:text-gray-600 transition-colors duration-200" 
-                      fill="none" 
-                      viewBox="0 0 24 24" 
-                      stroke="currentColor"
-                    >
-                      <path 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        strokeWidth={2} 
-                        d="M14 5l7 7m0 0l-7 7m7-7H3" 
-                      />
-                    </svg>
-                  </button>
+          {/* 快速問題區域 - 添加收合功能 */}
+          <div className="border-t border-gray-200">
+            {/* 收合按鈕 */}
+            <button
+              onClick={() => setIsQuickQuestionsOpen(!isQuickQuestionsOpen)}
+              className="w-full px-4 py-2 flex items-center justify-between text-sm text-gray-600 hover:bg-gray-50"
+            >
+              <span>快速問題</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className={`h-4 w-4 transition-transform duration-300 ${
+                  isQuickQuestionsOpen ? 'transform rotate-180' : ''
+                }`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+
+            {/* 快速問題內容 */}
+            <div className={`
+              overflow-hidden transition-all duration-300
+              ${isQuickQuestionsOpen 
+                ? 'max-h-[120px] opacity-100' 
+                : 'max-h-0 opacity-0'
+              }
+            `}>
+              <div className="px-4 py-3">
+                <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
+                  {QUICK_QUESTIONS.map((item, index) => (
+                    <div key={index} className="flex items-center group">
+                      <button
+                        onClick={() => handleQuickQuestion(item)}
+                        disabled={isLoading}
+                        className={`
+                          bg-gray-50 hover:bg-gray-100 
+                          text-gray-700 text-sm 
+                          px-4 py-2 
+                          rounded-lg 
+                          transition-colors duration-200 
+                          flex items-center gap-2
+                          border border-gray-200 hover:border-gray-300
+                          ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
+                        `}
+                      >
+                        <span>{item.text}</span>
+                        <svg 
+                          xmlns="http://www.w3.org/2000/svg" 
+                          className="h-4 w-4 text-gray-400 group-hover:text-gray-600 transition-colors duration-200" 
+                          fill="none" 
+                          viewBox="0 0 24 24" 
+                          stroke="currentColor"
+                        >
+                          <path 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round" 
+                            strokeWidth={2} 
+                            d="M14 5l7 7m0 0l-7 7m7-7H3" 
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           </div>
 

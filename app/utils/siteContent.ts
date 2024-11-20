@@ -3,7 +3,7 @@ export const SITE_CONTENT = {
     scraper: {
       title: "資料爬取功能",
       description: "支援從 Apple App Store 和 Google Play Store 爬取APP評論數據。使用者只需輸入APP的網址，系統就能自動收集評論資料。",
-      usage: "在爬取頁面輸入APP網址，選擇爬取數量，點擊開始即可。支援批量爬取多個APP。",
+      usage: "在爬取頁面輸入APP網址，點擊開始爬取即可。",
       pricing: "基本版每月可爬取1000則評論，進階版無限制。"
     },
     analysis: {
