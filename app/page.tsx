@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import type { AnalysisResult } from '@/types/feedback';
 import Image from "next/image";
+import { motion } from 'framer-motion';
 
 // 修正圖表組件的引入路徑
 import { SentimentPieChart } from './components/charts/SentimentPieChart';
@@ -30,7 +31,12 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="relative bg-white overflow-hidden">
+      <motion.section 
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="relative bg-white overflow-hidden"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl md:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-green-500">
@@ -41,10 +47,16 @@ export default function HomePage() {
             </p>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Features Section */}
-      <section className="py-16 bg-gray-50">
+      <motion.section 
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="py-16 bg-gray-50"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2 className="text-3xl font-bold text-gray-900">
@@ -54,7 +66,13 @@ export default function HomePage() {
 
           <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {/* 自動化爬取 */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="bg-white rounded-lg shadow-lg overflow-hidden"
+            >
               <div className="px-6 py-8">
                 <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white mx-auto">
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -68,10 +86,16 @@ export default function HomePage() {
                   一鍵爬取 Apple Store 和 Google Play 商店的評論，無需手動收集
                 </p>
               </div>
-            </div>
+            </motion.div>
 
             {/* AI 分析 */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="bg-white rounded-lg shadow-lg overflow-hidden"
+            >
               <div className="px-6 py-8">
                 <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white mx-auto">
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -85,10 +109,16 @@ export default function HomePage() {
                   運用先進的 AI 技術進行情感分析、關鍵詞提取和分類
                 </p>
               </div>
-            </div>
+            </motion.div>
 
             {/* 視覺化報表 */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+              className="bg-white rounded-lg shadow-lg overflow-hidden"
+            >
               <div className="px-6 py-8">
                 <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white mx-auto">
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -103,13 +133,19 @@ export default function HomePage() {
                   直觀的圖表展示，包括趨勢分析、情感分布、文字雲等
                 </p>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* How it works Section */}
-      <section className="py-16 bg-white">
+      <motion.section 
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="py-16 bg-white"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2 className="text-3xl font-bold text-gray-900">
@@ -119,7 +155,13 @@ export default function HomePage() {
 
           <div className="mt-12">
             <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-              <div className="text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="text-center"
+              >
                 <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white mx-auto">
                   <span className="text-lg font-bold">1</span>
                 </div>
@@ -129,9 +171,15 @@ export default function HomePage() {
                 <p className="mt-2 text-base text-gray-500">
                   在資料爬取頁面輸入 App Store 或 Google Play 的應用程式連結
                 </p>
-              </div>
+              </motion.div>
 
-              <div className="text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="text-center"
+              >
                 <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white mx-auto">
                   <span className="text-lg font-bold">2</span>
                 </div>
@@ -141,9 +189,15 @@ export default function HomePage() {
                 <p className="mt-2 text-base text-gray-500">
                   系統自動爬取並整理評論數據，支援批量處理
                 </p>
-              </div>
+              </motion.div>
 
-              <div className="text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                className="text-center"
+              >
                 <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white mx-auto">
                   <span className="text-lg font-bold">3</span>
                 </div>
@@ -153,14 +207,20 @@ export default function HomePage() {
                 <p className="mt-2 text-base text-gray-500">
                   在評論分析頁面查看完整的數據分析報告和視覺化圖表
                 </p>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* CTA Section */}
-      <section className="bg-blue-600">
+      <motion.section 
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="bg-blue-600"
+      >
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 lg:flex lg:items-center lg:justify-between">
           <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
             <span className="block">準備好開始使用了嗎？</span>
@@ -177,7 +237,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
     </main>
   );
 }

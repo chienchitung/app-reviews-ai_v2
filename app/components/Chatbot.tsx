@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SITE_CONTENT } from '../utils/siteContent';
+import { useMediaQuery } from 'react-responsive';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 const model = genAI.getGenerativeModel({
@@ -149,6 +150,8 @@ const QUICK_QUESTIONS: QuickQuestion[] = [
   }
 ];
 
+const SCROLL_AMOUNT = 200; // 每次滾動的像素數
+
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isQuickQuestionsOpen, setIsQuickQuestionsOpen] = useState(true);
@@ -160,6 +163,49 @@ const Chatbot = () => {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  const quickQuestionsRef = useRef<HTMLDivElement>(null);
+  const [showScrollButtons, setShowScrollButtons] = useState({
+    left: false,
+    right: false,
+  });
+
+  const checkScrollButtons = () => {
+    if (quickQuestionsRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = quickQuestionsRef.current;
+      setShowScrollButtons({
+        left: scrollLeft > 0,
+        right: scrollLeft < scrollWidth - clientWidth - 10,
+      });
+    }
+  };
+
+  const handleScroll = (direction: 'left' | 'right') => {
+    if (quickQuestionsRef.current) {
+      const newScrollLeft = quickQuestionsRef.current.scrollLeft + 
+        (direction === 'left' ? -SCROLL_AMOUNT : SCROLL_AMOUNT);
+      quickQuestionsRef.current.scrollTo({
+        left: newScrollLeft,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  useEffect(() => {
+    const currentRef = quickQuestionsRef.current;
+    if (currentRef) {
+      checkScrollButtons();
+      currentRef.addEventListener('scroll', checkScrollButtons);
+      window.addEventListener('resize', checkScrollButtons);
+    }
+    
+    return () => {
+      if (currentRef) {
+        currentRef.removeEventListener('scroll', checkScrollButtons);
+      }
+      window.removeEventListener('resize', checkScrollButtons);
+    };
+  }, []);
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
@@ -243,6 +289,8 @@ ${inputMessage}
     setInputMessage(item.question);
   };
 
+  const isMobile = useMediaQuery({ maxWidth: 768 });
+
   return (
     <div className="fixed bottom-4 right-4 z-50">
       <button
@@ -322,48 +370,123 @@ ${inputMessage}
             <div className={`
               overflow-hidden transition-all duration-300
               ${isQuickQuestionsOpen 
-                ? 'max-h-[120px] opacity-100' 
+                ? 'max-h-[80px] opacity-100' 
                 : 'max-h-0 opacity-0'
               }
             `}>
-              <div className="px-4 py-3">
-                <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
-                  {QUICK_QUESTIONS.map((item, index) => (
-                    <div key={index} className="flex items-center group">
+              {isMobile ? (
+                // 手機版 - 左右滑動設計
+                <div className="relative px-4 py-3">
+                  {showScrollButtons.left && (
+                    <button 
+                      onClick={() => handleScroll('left')}
+                      className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 shadow-md rounded-r-lg p-1"
+                      aria-label="向左滾動"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                  )}
+                  
+                  {showScrollButtons.right && (
+                    <button 
+                      onClick={() => handleScroll('right')}
+                      className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 shadow-md rounded-l-lg p-1"
+                      aria-label="向右滾動"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                  )}
+                  
+                  <div 
+                    ref={quickQuestionsRef}
+                    className="overflow-x-auto scrollbar-hide"
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                  >
+                    <div className="flex gap-2 w-max px-2">
+                      {QUICK_QUESTIONS.map((item, index) => (
+                        <button
+                          key={index}
+                          onClick={() => handleQuickQuestion(item)}
+                          disabled={isLoading}
+                          className={`
+                            whitespace-nowrap
+                            bg-gray-50 hover:bg-gray-100 
+                            text-gray-700 text-sm 
+                            px-4 py-2.5
+                            rounded-lg 
+                            transition-colors duration-200 
+                            flex items-center gap-2
+                            border border-gray-200 hover:border-gray-300
+                            ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
+                          `}
+                        >
+                          <span>{item.text}</span>
+                          <svg 
+                            xmlns="http://www.w3.org/2000/svg" 
+                            className="h-4 w-4 text-gray-400" 
+                            fill="none" 
+                            viewBox="0 0 24 24" 
+                            stroke="currentColor"
+                          >
+                            <path 
+                              strokeLinecap="round" 
+                              strokeLinejoin="round" 
+                              strokeWidth={2} 
+                              d="M9 5l7 7-7 7" 
+                            />
+                          </svg>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                // 桌面版 - 網格布局
+                <div className="px-4 py-3">
+                  <div className="grid grid-cols-3 gap-2">
+                    {QUICK_QUESTIONS.map((item, index) => (
                       <button
+                        key={index}
                         onClick={() => handleQuickQuestion(item)}
                         disabled={isLoading}
                         className={`
+                          group
                           bg-gray-50 hover:bg-gray-100 
                           text-gray-700 text-sm 
-                          px-4 py-2 
+                          px-4 py-3
                           rounded-lg 
-                          transition-colors duration-200 
-                          flex items-center gap-2
+                          transition-all duration-200 
                           border border-gray-200 hover:border-gray-300
+                          hover:shadow-sm
                           ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
                         `}
                       >
-                        <span>{item.text}</span>
-                        <svg 
-                          xmlns="http://www.w3.org/2000/svg" 
-                          className="h-4 w-4 text-gray-400 group-hover:text-gray-600 transition-colors duration-200" 
-                          fill="none" 
-                          viewBox="0 0 24 24" 
-                          stroke="currentColor"
-                        >
-                          <path 
-                            strokeLinecap="round" 
-                            strokeLinejoin="round" 
-                            strokeWidth={2} 
-                            d="M14 5l7 7m0 0l-7 7m7-7H3" 
-                          />
-                        </svg>
+                        <div className="flex items-center justify-between">
+                          <span className="text-left">{item.text}</span>
+                          <svg 
+                            xmlns="http://www.w3.org/2000/svg" 
+                            className="h-4 w-4 text-gray-400 group-hover:text-gray-600 transition-colors duration-200" 
+                            fill="none" 
+                            viewBox="0 0 24 24" 
+                            stroke="currentColor"
+                          >
+                            <path 
+                              strokeLinecap="round" 
+                              strokeLinejoin="round" 
+                              strokeWidth={2} 
+                              d="M14 5l7 7-7 7" 
+                            />
+                          </svg>
+                        </div>
                       </button>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
 
