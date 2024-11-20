@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import Navbar from './components/Navbar';
 import Link from 'next/link';
+import Chatbot from './components/Chatbot';
 
 // 配置字體
 const inter = Inter({
@@ -106,6 +107,7 @@ export default function RootLayout({
             </div>
           </footer>
         </div>
+        <Chatbot />
       </body>
     </html>
   );
