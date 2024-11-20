@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SITE_CONTENT } from '../utils/siteContent';
 
-const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || '');
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
 interface Message {
@@ -159,7 +159,7 @@ const Chatbot = () => {
       setIsLoading(true);
       
       // 檢查 API key 是否存在
-      if (!process.env.NEXT_PUBLIC_GEMINI_API_KEY) {
+      if (!process.env.GEMINI_API_KEY) {
         throw new Error('Gemini API key is not configured');
       }
 
@@ -201,14 +201,14 @@ ${inputMessage}
     } catch (error) {
       console.error('Chatbot Error:', {
         error,
-        apiKeyExists: !!process.env.NEXT_PUBLIC_GEMINI_API_KEY,
-        apiKeyPrefix: process.env.NEXT_PUBLIC_GEMINI_API_KEY?.substring(0, 10),
+        apiKeyExists: !!process.env.GEMINI_API_KEY,
+        apiKeyPrefix: process.env.GEMINI_API_KEY?.substring(0, 10),
         timestamp: new Date().toISOString(),
       });
 
       let errorMessage = '抱歉，系統暫時無法處理您的請求。';
       
-      if (!process.env.NEXT_PUBLIC_GEMINI_API_KEY) {
+      if (!process.env.GEMINI_API_KEY) {
         errorMessage = '系統配置錯誤，請聯繫管理員。';
       } else if (error instanceof Error) {
         errorMessage += '\n錯誤詳情：' + error.message;
