@@ -158,6 +158,11 @@ const Chatbot = () => {
     try {
       setIsLoading(true);
       
+      // 檢查 API key 是否存在
+      if (!process.env.NEXT_PUBLIC_GEMINI_API_KEY) {
+        throw new Error('Gemini API key is not configured');
+      }
+
       const userMessage: Message = {
         role: 'user',
         content: inputMessage
@@ -194,14 +199,24 @@ ${inputMessage}
       setMessages(prev => [...prev, aiMessage]);
 
     } catch (error) {
-      console.error('Error details:', {
+      console.error('Chatbot Error:', {
         error,
-        apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY?.slice(0, 10) + '...',
-        message: inputMessage
+        apiKeyExists: !!process.env.NEXT_PUBLIC_GEMINI_API_KEY,
+        apiKeyPrefix: process.env.NEXT_PUBLIC_GEMINI_API_KEY?.substring(0, 10),
+        timestamp: new Date().toISOString(),
       });
+
+      let errorMessage = '抱歉，系統暫時無法處理您的請求。';
+      
+      if (!process.env.NEXT_PUBLIC_GEMINI_API_KEY) {
+        errorMessage = '系統配置錯誤，請聯繫管理員。';
+      } else if (error instanceof Error) {
+        errorMessage += '\n錯誤詳情：' + error.message;
+      }
+
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: '抱歉，系統暫時無法處理您的請求。請稍後再試。'
+        content: errorMessage
       }]);
     } finally {
       setIsLoading(false);
