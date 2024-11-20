@@ -5,7 +5,15 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SITE_CONTENT } from '../utils/siteContent';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
-const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+const model = genAI.getGenerativeModel({
+  model: "gemini-1.5-pro",
+  generationConfig: {
+    temperature: 0.7,
+    maxOutputTokens: 512,
+    topK: 20,
+    topP: 0.8,
+  }
+});
 
 interface Message {
   role: 'user' | 'assistant';
