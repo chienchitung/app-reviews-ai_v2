@@ -1,6 +1,6 @@
 'use client';
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import type { AnalysisResult } from '@/types/feedback';
 
 interface SentimentPieChartProps {
@@ -15,9 +15,13 @@ export function SentimentPieChart({ data }: SentimentPieChartProps) {
     return acc;
   }, {} as Record<string, number>);
 
+  // 計算總數用於百分比計算
+  const total = Object.values(sentiments).reduce((sum, count) => sum + count, 0);
+
   const chartData = Object.entries(sentiments).map(([name, value]) => ({
     name,
-    value
+    value,
+    percentage: ((value / total) * 100).toFixed(1)
   }));
 
   const COLORS = {
@@ -26,20 +30,19 @@ export function SentimentPieChart({ data }: SentimentPieChartProps) {
     '負面': '#f87171'
   };
 
-  // 修改圖表主題配置
-  const config = {
-    // ...other configurations remain unchanged
-    theme: {
-      mode: 'light',
-    },
-    background: '#ffffff',
-    // 確保文字顏色使用深色
-    legend: {
-      labels: {
-        colors: '#1f2937' // 使用 gray-800 的顏色
-      }
-    },
-    // ...
+  // 自定義提示框內容
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="bg-white px-4 py-2 shadow-lg rounded-lg border border-gray-100">
+          <p className="text-sm font-medium text-gray-900">
+            {data.name}：{data.value} 則 ({data.percentage}%)
+          </p>
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
@@ -50,7 +53,7 @@ export function SentimentPieChart({ data }: SentimentPieChartProps) {
           cx="50%"
           cy="50%"
           labelLine={false}
-          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+          label={undefined}
           outerRadius={120}
           innerRadius={60}
           fill="#8884d8"
@@ -64,10 +67,7 @@ export function SentimentPieChart({ data }: SentimentPieChartProps) {
             />
           ))}
         </Pie>
-        <Tooltip 
-          contentStyle={{ backgroundColor: 'white', border: '1px solid #e5e7eb' }}
-          itemStyle={{ color: '#1f2937' }}
-        />
+        <Tooltip content={<CustomTooltip />} />
         <Legend 
           verticalAlign="bottom" 
           height={36}

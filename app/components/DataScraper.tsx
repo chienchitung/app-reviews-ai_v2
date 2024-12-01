@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import DataTable from './DataTable';
 import type { Review } from '@/types/feedback';
+import * as XLSX from 'xlsx';
 
 interface StoreUrls {
   appleStore: string;
@@ -11,7 +12,6 @@ interface StoreUrls {
 
 export default function DataScraper() {
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [showTable, setShowTable] = useState(false);
@@ -42,7 +42,6 @@ export default function DataScraper() {
       }
 
       setIsLoading(true);
-      setMessage('正在爬取資料...');
       setError(null);
       setShowTable(false);
 
@@ -61,39 +60,52 @@ export default function DataScraper() {
       }
 
       setReviews(result.data);
-      setMessage('爬取完成!');
+      setShowTable(true);
       
     } catch (error) {
       console.error('爬蟲錯誤:', error);
       setError(error instanceof Error ? error.message : '爬蟲執行失敗，請稍後再試');
-      setMessage('');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleDownloadCSV = () => {
-    const csvContent = "data:text/csv;charset=utf-8," 
-      + "日期,使用者,評論,評分,平台,開發者回覆,語言\n"
-      + reviews.map(row => 
-          [
-            row.date,
-            row.username,
-            `"${row.review.replace(/"/g, '""')}"`,
-            row.rating.toString(),
-            row.platform,
-            `"${(row.developerResponse || '').replace(/"/g, '""')}"`,
-            row.language
-          ].join(",")
-        ).join("\n");
+  const handleDownloadExcel = () => {
+    if (!reviews.length) return;
 
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "app_reviews.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // 準備 Excel 資料
+    const excelData = reviews.map(row => ({
+      日期: row.date || '',
+      使用者: row.username || '',
+      評論: row.review || '',
+      評分: row.rating || 0,
+      平台: row.platform || '',
+      開發者回覆: row.developerResponse || '',
+      語言: row.language || ''
+    }));
+
+    // 建立工作簿
+    const wb = XLSX.utils.book_new();
+    // 將資料轉換為工作表
+    const ws = XLSX.utils.json_to_sheet(excelData);
+
+    // 設定欄寬
+    const columnWidths = [
+      { wch: 15 },  // 日期
+      { wch: 15 },  // 使用者
+      { wch: 50 },  // 評論
+      { wch: 8 },   // 評分
+      { wch: 15 },  // 平台
+      { wch: 50 },  // 開發者回覆
+      { wch: 10 }   // 語言
+    ];
+    ws['!cols'] = columnWidths;
+
+    // 將工作表加入工作簿
+    XLSX.utils.book_append_sheet(wb, ws, "評論資料");
+
+    // 下載檔案
+    XLSX.writeFile(wb, `app_reviews_${new Date().toISOString().split('T')[0]}.xlsx`);
   };
 
   const handleSearch = async () => {
@@ -148,7 +160,6 @@ export default function DataScraper() {
     
     // 清除爬取相關狀態
     setReviews([]);
-    setMessage('');
     setShowTable(false);
     setIsLoading(false);
   };
@@ -251,25 +262,39 @@ export default function DataScraper() {
             </div>
           </div>
 
-          <div className="flex justify-center">
+          <div className="flex justify-center gap-4">
             <button
               onClick={handleScrape}
               disabled={isLoading}
-              className="px-6 py-2.5 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="px-6 py-2.5 bg-blue-500 text-white rounded-xl hover:bg-blue-600 
+              transition-all transform active:scale-95 disabled:opacity-50 
+              disabled:cursor-not-allowed focus:outline-none focus:ring-2 
+              focus:ring-blue-500 focus:ring-offset-2 flex items-center gap-2"
             >
-              {isLoading ? '爬取中...' : '開始爬取'}
+              {isLoading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  正在爬取
+                </>
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
+                  </svg>
+                  開始爬取
+                </>
+              )}
             </button>
           </div>
           
-          {message && (
-            <p className="text-center text-green-600">
-              {message}
-            </p>
-          )}
-
           {error && (
-            <p className="text-center text-red-600">
-              錯誤：{error}
+            <p className="text-center text-red-600 mt-4 px-4 py-2 bg-red-50 rounded-lg">
+              <span className="flex items-center gap-2 justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+                {error}
+              </span>
             </p>
           )}
         </div>
@@ -278,27 +303,44 @@ export default function DataScraper() {
         {reviews.length > 0 && (
           <div className="mt-8 space-y-4">
             <div className="flex justify-between items-center">
-              <h2 className="text-lg font-medium text-gray-900">評論資料</h2>
+              <h2 className="text-lg font-medium text-gray-900">
+                評論資料 ({reviews.length} 筆)
+              </h2>
               <button
                 onClick={() => setShowTable(!showTable)}
-                className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
+                className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 
+                rounded-xl transition-all transform active:scale-95 
+                focus:outline-none focus:ring-2 focus:ring-gray-200 flex items-center gap-2"
               >
-                {showTable ? '隱藏資料表' : '查看資料表'}
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  {showTable ? (
+                    <path fillRule="evenodd" d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" clipRule="evenodd" />
+                  ) : (
+                    <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
+                  )}
+                </svg>
+                {showTable ? '隱藏資料表' : '展開資料表'}
               </button>
             </div>
 
             {showTable && (
-              <div className="rounded-xl overflow-hidden border border-gray-200">
+              <div className="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
                 <DataTable data={reviews} />
               </div>
             )}
 
             <div className="flex justify-center pt-4">
               <button
-                onClick={handleDownloadCSV}
-                className="px-6 py-2.5 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                onClick={handleDownloadExcel}
+                className="px-6 py-2.5 bg-green-500 text-white rounded-xl 
+                hover:bg-green-600 transition-all transform active:scale-95 
+                focus:outline-none focus:ring-2 focus:ring-green-500 
+                focus:ring-offset-2 flex items-center gap-2"
               >
-                下載 CSV
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+                下載 Excel
               </button>
             </div>
           </div>

@@ -153,7 +153,7 @@ export const RatingDistributionChart = ({ data }: TrendChartProps) => {
 
   return (
     <div className="w-full h-full">
-      <h3 className="text-center text-sm font-medium mb-4">評分分布</h3>
+      <h3 className="text-center text-sm font-medium mb-4">評分分布 (按裝置分)</h3>
       <div className="w-full h-[calc(100%-2rem)]">
         <ResponsiveContainer>
           <BarChart

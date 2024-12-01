@@ -8,32 +8,28 @@ interface KeywordsBarChartProps {
 }
 
 export const KeywordsBarChart = ({ keywords }: KeywordsBarChartProps) => {
+  const total = keywords.reduce((sum, keyword) => sum + keyword.count, 0);
+
   const sortedData = [...keywords]
     .sort((a, b) => b.count - a.count)
-    .slice(0, 20);
+    .slice(0, 20)
+    .map(item => ({
+      ...item,
+      percentage: ((item.count / total) * 100).toFixed(1)
+    }));
 
-  const options = {
-    theme: {
-      mode: 'light',
-    },
-    background: '#ffffff',
-    chart: {
-      background: '#ffffff',
-    },
-    xaxis: {
-      labels: {
-        style: {
-          colors: '#1f2937'
-        }
-      }
-    },
-    yaxis: {
-      labels: {
-        style: {
-          colors: '#1f2937'
-        }
-      }
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="bg-white px-4 py-2 shadow-lg rounded-lg border border-gray-100">
+          <p className="text-sm font-medium text-gray-900">
+            {data.word}：{data.count} 次 ({data.percentage}%)
+          </p>
+        </div>
+      );
     }
+    return null;
   };
 
   return (
@@ -53,14 +49,12 @@ export const KeywordsBarChart = ({ keywords }: KeywordsBarChartProps) => {
             fill: '#1f2937'
           }}
         />
-        <Tooltip 
-          contentStyle={{ 
-            backgroundColor: 'white', 
-            border: '1px solid #e5e7eb' 
-          }}
-        />
+        <Tooltip content={<CustomTooltip />} />
         <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-        <Bar dataKey="count" fill="#60a5fa" />
+        <Bar 
+          dataKey="count"
+          fill="#60a5fa"
+        />
       </BarChart>
     </ResponsiveContainer>
   );
