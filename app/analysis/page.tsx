@@ -16,7 +16,7 @@ const LogoSVG = () => (
       <rect width="150" height="150" fill="#F9F9F9"/>    
       {/* 中間大四角星 */}
       <path d="M96.1375 51.2609C101.308 50.3007 104.299 47.2723 105.149 42.1759C105.684 47.0877 109.432 50.633 114.086 51.2239C108.971 52.1657 105.961 55.1755 105.112 60.3273C104.853 57.9822 103.93 55.9141 102.268 54.2153C100.569 52.5165 98.5195 51.5563 96.1375 51.2609Z" fill="currentColor"/>
-      {/* 左上四角星 */}
+      {/* 左上小四角星 */}
       <path d="M37.3222 78.0925C59.6985 73.9369 72.6448 60.8307 76.3209 38.7741C78.6385 60.0316 94.8613 75.3753 115 77.9326C92.8634 82.0083 79.8372 95.0345 76.1611 117.331C75.0423 107.182 71.0465 98.2312 63.8541 90.8789C56.5019 83.5267 47.6313 79.3711 37.3222 78.0925Z" fill="currentColor"/>
       {/* 右上小四角星 */}
       <path d="M35 44.7824C41.8937 43.5022 45.8822 39.4644 47.0148 32.6692C47.7288 39.2182 52.7267 43.9453 58.931 44.7332C52.1112 45.9888 48.0981 50.002 46.9655 56.8711C46.6208 53.7443 45.3898 50.9868 43.174 48.7217C40.9089 46.4566 38.176 45.1764 35 44.7824Z" fill="currentColor"/>
@@ -104,7 +104,10 @@ export default function AnalysisPage() {
   // 新增一個 state 來保存原始數據
   const [originalData, setOriginalData] = useState<AnalysisResult | null>(null);
 
-  // 修改 handleAnalyze 函數，同時保存原始數據
+  // 在 AnalysisPage 組件中添加一個新的 state 來存儲所有可用的分類
+  const [allCategories, setAllCategories] = useState<string[]>([]);
+
+  // 修改 handleAnalyze 函數中的類型定義
   const handleAnalyze = async () => {
     if (!file) return;
 
@@ -131,6 +134,16 @@ export default function AnalysisPage() {
         throw new Error('數據格式錯誤');
       }
 
+      // 提取所有唯一的分類，添加明確的類型定義
+      const uniqueCategories = Array.from(new Set(
+        result.data.feedbacks.flatMap((f: { category: string }) => 
+          f.category.split(/[,，]/).map((c: string) => c.trim())
+        )
+      )) as string[]; // 明確指定類型為 string[]
+
+      // 設置所有可用的分類
+      setAllCategories(uniqueCategories);
+      
       // 保存原始數據
       setOriginalData(result.data);
       setAnalysisResult(result.data);
@@ -958,11 +971,7 @@ export default function AnalysisPage() {
                     </span>
                   </label>
                   <div className="flex flex-wrap gap-2">
-                    {Array.from(new Set(
-                      analysisResult.feedbacks.flatMap(f => 
-                        f.category.split(/[,，]/).map(c => c.trim())
-                      )
-                    )).map(category => (
+                    {allCategories.map(category => (
                       <button
                         key={category}
                         onClick={() => {

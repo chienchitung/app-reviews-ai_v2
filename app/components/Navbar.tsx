@@ -108,6 +108,25 @@ export default function Navbar({}: NavbarProps) {
                   </Link>
                 </li>
               ))}
+              
+              <li className="pt-4 border-t">
+                <Link 
+                  href="/login"
+                  className="flex items-center py-3 px-4 text-lg text-gray-700 hover:bg-gray-100 rounded-md font-medium"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  登入
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/analysis"
+                  className="flex items-center py-3 px-4 text-lg text-white bg-[#0066FF] hover:bg-[#0052CC] rounded-md font-medium"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  免費開始
+                </Link>
+              </li>
             </ul>
           </nav>
         </div>
@@ -178,10 +197,28 @@ export default function Navbar({}: NavbarProps) {
               </Link>
             </div>
 
-            <div className="flex items-center space-x-4 md:hidden">
+            <div className="flex items-center space-x-4">
+              <div className="hidden md:flex items-center space-x-4">
+                <Link 
+                  href="/login" 
+                  className="text-gray-700 hover:text-gray-900 text-sm font-medium"
+                >
+                  登入
+                </Link>
+                <Link 
+                  href="/analysis"
+                  className="inline-flex items-center px-4 py-2 rounded-lg
+                    bg-[#0066FF] hover:bg-[#0052CC]
+                    text-white text-sm font-medium
+                    transition-colors duration-200"
+                >
+                  免費開始
+                </Link>
+              </div>
+
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="inline-flex items-center justify-center h-10 w-10 rounded-md text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+                className="inline-flex items-center justify-center h-10 w-10 rounded-md text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground md:hidden"
                 aria-label="Menu"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-menu">
