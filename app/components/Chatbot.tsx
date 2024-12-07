@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SITE_CONTENT } from '../utils/siteContent';
 import { useMediaQuery } from 'react-responsive';
+import { Bot } from 'lucide-react';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 const model = genAI.getGenerativeModel({
@@ -34,18 +35,19 @@ const SYSTEM_PROMPT = `你是一個專業的APP評論分析平台助手，具備
 - 協助分析APP評論數據
 - 提供專業的數據解讀和建議
 - 找出用戶反饋中的關鍵洞察
-- 建議改進方向和優化策略
+- 進方向和優化策略
 回答風格：數據導向、專業分析、提供可行建議
 
 回答原則：
 1. 直接切入問題核心，提供解決方案
 2. 保持專業且友善的對話風格
-3. 回答要具體且實用
+3. 回答要具體且簡潔扼要
 4. 適時主動提供延伸建議
 5. 如遇不明確的問題，主動詢問細節
 6. 不要在回答中提及或說明目前使用哪種角色
 7. 不要在回答中提及或說明目前使用哪種專業能力
 8. 回答內容不要有 " * "符號
+9. 回答請使用繁體中文
 
 請根據用戶的問題自動判斷使用適合的回答方式，若用戶詢問的問題與平台不相關，請委婉回覆無法解答。`;
 
@@ -66,7 +68,7 @@ ${SITE_CONTENT.pricing.basic.features.map(f => `- ${f}`).join('\n')}
 ${SITE_CONTENT.pricing.pro.features.map(f => `- ${f}`).join('\n')}`
     },
     scraper: {
-      keywords: ['爬', '抓取', '收集', '下載', '資料來源', 'app store', 'play store'],
+      keywords: ['爬取', '收集', '下載', '資料來源', 'app store', 'play store'],
       getContent: () => `
 資料爬取功能說明：
 ${SITE_CONTENT.features.scraper.description}
@@ -210,6 +212,15 @@ const Chatbot = () => {
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
 
+    const userMessage: Message = {
+      role: 'user',
+      content: inputMessage
+    };
+
+    // 立即清空輸入框並顯示使用者訊息
+    setInputMessage('');
+    setMessages(prev => [...prev, userMessage]);
+    
     try {
       setIsLoading(true);
       
@@ -217,13 +228,6 @@ const Chatbot = () => {
       if (!process.env.GEMINI_API_KEY) {
         throw new Error('Gemini API key is not configured');
       }
-
-      const userMessage: Message = {
-        role: 'user',
-        content: inputMessage
-      };
-      setMessages(prev => [...prev, userMessage]);
-      setInputMessage('');
 
       // 獲取相關內容
       const relevantContent = getRelevantContent(inputMessage);
@@ -239,7 +243,7 @@ ${relevantContent}
 ${messages.map(msg => `${msg.role === 'user' ? '用戶' : 'AI助手'}: ${msg.content}`).join('\n')}
 
 當前用戶問題：
-${inputMessage}
+${userMessage.content}
 
 請根據以上資訊和角色定位進行回答，優先使用提供的平台資訊來回答：`;
 
@@ -251,6 +255,8 @@ ${inputMessage}
         role: 'assistant',
         content: text
       };
+      
+      // 更新訊息列表，加入 AI 的回應
       setMessages(prev => [...prev, aiMessage]);
 
     } catch (error) {
@@ -269,6 +275,7 @@ ${inputMessage}
         errorMessage += '\n錯誤詳情：' + error.message;
       }
 
+      // 更新訊息列表，加入錯誤訊息
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: errorMessage
@@ -291,11 +298,67 @@ ${inputMessage}
 
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
+  // 修改初始訊息的設定方式
+  const initialMessage: Message = {
+    role: 'assistant',
+    content: '您好！我是您的 AI小助手。我可以：\n1. 協助您了解平台功能與操作方式\n2. 提供專業的數據分析建議\n\n請問有什麼我可以幫您的嗎？'
+  };
+
+  // 使用 useEffect 來初始化訊息，只在組件首次載入時執行
+  useEffect(() => {
+    // 檢查是否有儲存的對話紀錄
+    const savedMessages = localStorage.getItem('chatMessages');
+    if (savedMessages) {
+      setMessages(JSON.parse(savedMessages));
+    } else {
+      setMessages([initialMessage]);
+    }
+  }, []);
+
+  // 當訊息更新時，儲存到 localStorage
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem('chatMessages', JSON.stringify(messages));
+    }
+  }, [messages]);
+
+  // 修改開關視窗的處理函數
+  const handleToggleChat = () => {
+    setIsOpen(!isOpen);
+    // 只在開啟時重置快速問題區域的狀態
+    if (!isOpen) {
+      setIsQuickQuestionsOpen(true);
+    }
+  };
+
+  // 新增清除對話紀錄的功能
+  const handleClearChat = () => {
+    setMessages([initialMessage]);
+    localStorage.removeItem('chatMessages');
+  };
+
+  // 新增一個 ref 來追蹤訊息容器
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // 新增滾動到底部的函數
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // 當訊息更新時自動滾動到底部
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className="fixed bottom-4 right-4 z-50 max-w-[95vw]">
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="bg-blue-500 hover:bg-blue-600 text-white rounded-full p-3 shadow-lg transition-all duration-200"
+        onClick={handleToggleChat}
+        className={`
+          bg-blue-500 hover:bg-blue-600 text-white rounded-full p-3 
+          shadow-lg transition-all duration-200
+          ${isMobile && isOpen ? 'hidden' : ''}
+        `}
       >
         {isOpen ? (
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -309,15 +372,54 @@ ${inputMessage}
       </button>
 
       {isOpen && (
-        <div className="absolute bottom-16 right-0 w-[320px] sm:w-[380px] bg-white rounded-lg shadow-xl border border-gray-200">
-          <div className="p-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold">AI小助手</h3>
+        <div className={`
+          ${isMobile 
+            ? 'fixed inset-0 w-full h-full' 
+            : 'absolute bottom-16 right-0 w-[320px] sm:w-[380px] max-h-[80vh]'
+          }
+          bg-white rounded-lg shadow-xl border border-gray-200
+          ${isMobile ? 'rounded-none' : ''}
+        `}>
+          <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <Bot className="h-5 w-5 text-blue-500" />
+              AI小助手
+            </h3>
+            <div className="flex items-center gap-2">
+              {/* 新增清除對話按鈕 */}
+              <button
+                onClick={handleClearChat}
+                className="p-2 hover:bg-gray-100 rounded-full text-gray-500"
+                title="清除對話"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+              {isMobile && (
+                <button
+                  onClick={handleToggleChat}
+                  className="p-2 hover:bg-gray-100 rounded-full"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </div>
           </div>
 
-          {/* 聊天訊息區域 - 調整高度以適應快速問題區域的狀態 */}
-          <div className={`overflow-y-auto p-4 transition-all duration-300 ${
-            isQuickQuestionsOpen ? 'h-[320px]' : 'h-[380px]'
-          }`}>
+          <div className={`
+            overflow-y-auto p-4 transition-all duration-300
+            ${isMobile 
+              ? isQuickQuestionsOpen 
+                ? 'h-[calc(100vh-300px)]'
+                : 'h-[calc(100vh-180px)]'
+              : isQuickQuestionsOpen 
+                ? 'max-h-[calc(60vh-180px)]'
+                : 'max-h-[calc(60vh-120px)]'
+            }
+          `}>
             <div className="space-y-4">
               {messages.map((message, index) => (
                 <div key={index} className={`flex items-start ${message.role === 'user' ? 'justify-end' : ''}`}>
@@ -333,16 +435,23 @@ ${inputMessage}
               {isLoading && (
                 <div className="flex items-start">
                   <div className="bg-gray-100 rounded-lg p-3">
-                    <p>正在思考中...</p>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                    </div>
                   </div>
                 </div>
               )}
+              {/* 新增一個空的 div 作為滾動目標 */}
+              <div ref={messagesEndRef} />
             </div>
           </div>
 
-          {/* 快速問題區域 - 添加收合功能 */}
-          <div className="border-t border-gray-200">
-            {/* 收合按鈕 */}
+          <div className={`
+            border-t border-gray-200
+            ${isMobile ? 'fixed bottom-[70px] left-0 right-0 bg-white z-10' : ''}
+          `}>
             <button
               onClick={() => setIsQuickQuestionsOpen(!isQuickQuestionsOpen)}
               className="w-full px-4 py-2 flex items-center justify-between text-sm text-gray-600 hover:bg-gray-50"
@@ -366,132 +475,62 @@ ${inputMessage}
               </svg>
             </button>
 
-            {/* 快速問題內容 */}
             <div className={`
               overflow-hidden transition-all duration-300
               ${isQuickQuestionsOpen 
-                ? 'max-h-[80px] opacity-100' 
-                : 'max-h-0 opacity-0'
+                ? 'h-[80px] opacity-100' 
+                : 'h-0 opacity-0'
               }
             `}>
-              {isMobile ? (
-                // 手機版 - 左右滑動設計
-                <div className="relative px-4 py-3">
-                  {showScrollButtons.left && (
-                    <button 
-                      onClick={() => handleScroll('left')}
-                      className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 shadow-md rounded-r-lg p-1"
-                      aria-label="向左滾動"
+              <div 
+                ref={quickQuestionsRef}
+                className="overflow-x-auto scrollbar-hide h-full"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                <div className="flex gap-2 w-max px-2 py-2">
+                  {QUICK_QUESTIONS.map((item, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleQuickQuestion(item)}
+                      disabled={isLoading}
+                      className={`
+                        whitespace-nowrap
+                        bg-gray-50 hover:bg-gray-100 
+                        text-gray-700 text-sm 
+                        px-4 py-2
+                        rounded-lg 
+                        transition-colors duration-200 
+                        flex items-center gap-2
+                        border border-gray-200 hover:border-gray-300
+                        ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
+                      `}
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </button>
-                  )}
-                  
-                  {showScrollButtons.right && (
-                    <button 
-                      onClick={() => handleScroll('right')}
-                      className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 shadow-md rounded-l-lg p-1"
-                      aria-label="向右滾動"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </button>
-                  )}
-                  
-                  <div 
-                    ref={quickQuestionsRef}
-                    className="overflow-x-auto scrollbar-hide"
-                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                  >
-                    <div className="flex gap-2 w-max px-2">
-                      {QUICK_QUESTIONS.map((item, index) => (
-                        <button
-                          key={index}
-                          onClick={() => handleQuickQuestion(item)}
-                          disabled={isLoading}
-                          className={`
-                            whitespace-nowrap
-                            bg-gray-50 hover:bg-gray-100 
-                            text-gray-700 text-sm 
-                            px-4 py-2.5
-                            rounded-lg 
-                            transition-colors duration-200 
-                            flex items-center gap-2
-                            border border-gray-200 hover:border-gray-300
-                            ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
-                          `}
-                        >
-                          <span>{item.text}</span>
-                          <svg 
-                            xmlns="http://www.w3.org/2000/svg" 
-                            className="h-4 w-4 text-gray-400" 
-                            fill="none" 
-                            viewBox="0 0 24 24" 
-                            stroke="currentColor"
-                          >
-                            <path 
-                              strokeLinecap="round" 
-                              strokeLinejoin="round" 
-                              strokeWidth={2} 
-                              d="M9 5l7 7-7 7" 
-                            />
-                          </svg>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                // 桌面版 - 網格布局
-                <div className="px-4 py-3">
-                  <div className="grid grid-cols-3 gap-2">
-                    {QUICK_QUESTIONS.map((item, index) => (
-                      <button
-                        key={index}
-                        onClick={() => handleQuickQuestion(item)}
-                        disabled={isLoading}
-                        className={`
-                          group
-                          bg-gray-50 hover:bg-gray-100 
-                          text-gray-700 text-sm 
-                          px-4 py-3
-                          rounded-lg 
-                          transition-all duration-200 
-                          border border-gray-200 hover:border-gray-300
-                          hover:shadow-sm
-                          ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
-                        `}
+                      <span>{item.text}</span>
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        className="h-4 w-4 text-gray-400" 
+                        fill="none" 
+                        viewBox="0 0 24 24" 
+                        stroke="currentColor"
                       >
-                        <div className="flex items-center justify-between">
-                          <span className="text-left">{item.text}</span>
-                          <svg 
-                            xmlns="http://www.w3.org/2000/svg" 
-                            className="h-4 w-4 text-gray-400 group-hover:text-gray-600 transition-colors duration-200" 
-                            fill="none" 
-                            viewBox="0 0 24 24" 
-                            stroke="currentColor"
-                          >
-                            <path 
-                              strokeLinecap="round" 
-                              strokeLinejoin="round" 
-                              strokeWidth={2} 
-                              d="M14 5l7 7-7 7" 
-                            />
-                          </svg>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
+                        <path 
+                          strokeLinecap="round" 
+                          strokeLinejoin="round" 
+                          strokeWidth={2} 
+                          d="M9 5l7 7-7 7" 
+                        />
+                      </svg>
+                    </button>
+                  ))}
                 </div>
-              )}
+              </div>
             </div>
           </div>
 
-          {/* 輸入區域 */}
-          <div className="p-4 border-t border-gray-200">
+          <div className={`
+            p-4 border-t border-gray-200
+            ${isMobile ? 'fixed bottom-0 left-0 right-0 bg-white z-10' : ''}
+          `}>
             <div className="flex space-x-2">
               <input
                 type="text"

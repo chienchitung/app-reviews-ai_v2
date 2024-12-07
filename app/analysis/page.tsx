@@ -127,7 +127,7 @@ export default function AnalysisPage() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || '分析請求失敗');
+        throw new Error(result.error || '分析��求失敗');
       }
 
       if (!result.success || !result.data) {
@@ -411,7 +411,7 @@ export default function AnalysisPage() {
       categories: []
     });
     
-    // 重置所有圖表和數據到初始狀態
+    // 重置所有圖表和數據到初始狀���
     if (originalData) {
       setAnalysisResult({
         ...originalData,
@@ -721,7 +721,7 @@ export default function AnalysisPage() {
             </section>
           )}
 
-          {/* 新增篩選器區塊 - 重新設計版本 */}
+          {/* 新增篩選器區塊 - 重新設計���本 */}
           <section className="bg-white rounded-xl p-6 shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-3">
@@ -775,75 +775,74 @@ export default function AnalysisPage() {
                   </button>
 
                   {showDatePicker && (
-                    <div className="absolute z-50 w-[500px] mt-1 bg-white rounded-lg shadow-lg border border-gray-200">
+                    <div className="absolute z-50 w-full md:w-[500px] mt-1 bg-white rounded-lg shadow-lg border border-gray-200">
                       <div className="p-4">
-                        <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div className="space-y-1">
-                    <label className="block text-xs text-gray-500">開始日期</label>
-                      <input
-                        type="date"
-                        value={filters.dateRange.start}
-                        onClick={() => setShowDatePicker(true)}
-                        onChange={(e) => handleFilterChange({
-                          ...filters,
-                          dateRange: { ...filters.dateRange, start: e.target.value }
-                        })}
-                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                      />
-                    </div>
-                  <div className="space-y-1">
-                    <label className="block text-xs text-gray-500">結束日期</label>
-                      <input
-                        type="date"
-                        value={filters.dateRange.end}
-                        onChange={(e) => handleFilterChange({
-                          ...filters,
-                          dateRange: { ...filters.dateRange, end: e.target.value }
-                        })}
-                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                      />
-                    </div>
-                  </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                          <div className="space-y-1">
+                            <label className="block text-xs text-gray-500">開始日期</label>
+                            <input
+                              type="date"
+                              value={filters.dateRange.start}
+                              onChange={(e) => handleFilterChange({
+                                ...filters,
+                                dateRange: { ...filters.dateRange, start: e.target.value }
+                              })}
+                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block text-xs text-gray-500">結束日期</label>
+                            <input
+                              type="date"
+                              value={filters.dateRange.end}
+                              onChange={(e) => handleFilterChange({
+                                ...filters,
+                                dateRange: { ...filters.dateRange, end: e.target.value }
+                              })}
+                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                            />
+                          </div>
+                        </div>
 
-                        <div className="grid grid-cols-3 gap-2">
-                      <button
-                        onClick={() => handleQuickDateSelect('thisMonth')}
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                          <button
+                            onClick={() => handleQuickDateSelect('thisMonth')}
                             className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                      >
-                        本月
-                      </button>
-                      <button
-                        onClick={() => handleQuickDateSelect('lastMonth')}
+                          >
+                            本月
+                          </button>
+                          <button
+                            onClick={() => handleQuickDateSelect('lastMonth')}
                             className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                      >
-                        上個月
-                      </button>
-                      <button
-                        onClick={() => handleQuickDateSelect('last7days')}
+                          >
+                            上個月
+                          </button>
+                          <button
+                            onClick={() => handleQuickDateSelect('last7days')}
                             className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                      >
-                        最近 7 天
-                      </button>
-                      <button
-                        onClick={() => handleQuickDateSelect('last14days')}
+                          >
+                            最近 7 天
+                          </button>
+                          <button
+                            onClick={() => handleQuickDateSelect('last14days')}
                             className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                      >
-                        最近 14 天
-                      </button>
-                      <button
-                        onClick={() => handleQuickDateSelect('last30days')}
+                          >
+                            最近 14 天
+                          </button>
+                          <button
+                            onClick={() => handleQuickDateSelect('last30days')}
                             className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                      >
-                        最近 30 天
-                      </button>
-                      <button
-                        onClick={() => handleQuickDateSelect('last3Months')}
+                          >
+                            最近 30 天
+                          </button>
+                          <button
+                            onClick={() => handleQuickDateSelect('last3Months')}
                             className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                      >
-                        最近 3 個月
-                      </button>
-                    </div>
-                  </div>
+                          >
+                            最近 3 個月
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -891,7 +890,7 @@ export default function AnalysisPage() {
                   <label className="block text-sm font-medium text-gray-700">
                     <span className="flex items-center space-x-1">
                       <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.921-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.538 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.783.57-1.838-.197-1.538-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                       </svg>
                       <span>星等</span>
                     </span>
@@ -1169,7 +1168,7 @@ export default function AnalysisPage() {
                                   fill="currentColor" 
                                   viewBox="0 0 20 20"
                                 >
-                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.783.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.538 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.783.57-1.838-.197-1.538-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                 </svg>
                               </div>
                             </td>
