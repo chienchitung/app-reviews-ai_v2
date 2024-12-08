@@ -3,11 +3,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useLanguage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +31,7 @@ export default function ForgotPasswordPage() {
           className="inline-flex items-center text-gray-600 hover:text-gray-900"
         >
           <ArrowLeft className="h-5 w-5 mr-2" />
-          返回登入
+          {t('forgotPassword.backToLogin') as string}
         </Link>
       </div>
 
@@ -38,13 +40,12 @@ export default function ForgotPasswordPage() {
           {/* 標題區 */}
           <div className="text-center space-y-2">
             <h1 className="text-3xl font-bold text-gray-900">
-              重設密碼
+              {t('forgotPassword.title') as string}
             </h1>
             <p className="text-gray-600">
               {!isSubmitted 
-                ? '請輸入您的電子郵件，我們將發送重設密碼的連結給您'
-                : '重設密碼的連結已發送至您的信箱'
-              }
+                ? t('forgotPassword.subtitle') as string
+                : t('forgotPassword.success') as string}
             </p>
           </div>
 
@@ -56,7 +57,7 @@ export default function ForgotPasswordPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="電子郵件"
+                  placeholder={t('forgotPassword.email.placeholder') as string}
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#0066FF] focus:ring-2 focus:ring-[#0066FF]/20 outline-none transition-all"
                   required
                 />
@@ -74,9 +75,9 @@ export default function ForgotPasswordPage() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    處理中...
+                    {t('forgotPassword.loading') as string}
                   </>
-                ) : '發送重設連結'}
+                ) : t('forgotPassword.button') as string}
               </button>
             </form>
           ) : (
@@ -91,19 +92,19 @@ export default function ForgotPasswordPage() {
                   </div>
                   <div className="ml-3">
                     <p className="text-sm font-medium">
-                      我們已發送重設密碼的連結至 {email}
+                      {t('forgotPassword.emailSent', { email }) as string}
                     </p>
                   </div>
                 </div>
               </div>
               
               <div className="text-center text-sm text-gray-600">
-                <p>沒收到郵件？</p>
+                <p>{t('forgotPassword.noEmail') as string}</p>
                 <button 
                   onClick={() => setIsSubmitted(false)}
                   className="text-[#0066FF] hover:underline font-medium"
                 >
-                  重新發送
+                  {t('forgotPassword.resend') as string}
                 </button>
               </div>
             </div>
@@ -111,12 +112,12 @@ export default function ForgotPasswordPage() {
 
           {/* 提示訊息 */}
           <div className="text-center text-sm text-gray-600">
-            記起密碼了？
+            {t('forgotPassword.rememberPassword') as string}
             <Link 
               href="/login" 
               className="text-[#0066FF] hover:underline ml-1 font-medium"
             >
-              返回登入
+              {t('forgotPassword.backToLoginLink') as string}
             </Link>
           </div>
         </div>

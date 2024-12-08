@@ -2,9 +2,11 @@
 
 import { useRouter } from 'next/navigation';
 import { CheckCircle, Clock } from 'lucide-react';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function EnterpriseSuccessPage() {
   const router = useRouter();
+  const { t } = useLanguage();
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
@@ -14,26 +16,26 @@ export default function EnterpriseSuccessPage() {
         </div>
         
         <h1 className="text-2xl font-bold text-gray-900 mb-4">
-          表單提交成功！
+          {t('enterprise.success.title')}
         </h1>
         
         <div className="text-gray-600 mb-8 space-y-4">
           <div className="flex items-center justify-center space-x-2 text-blue-600">
             <Clock className="h-5 w-5" />
-            <span>預計 1-3 個工作天內與您聯繫</span>
+            <span>{t('enterprise.success.response')}</span>
           </div>
           
           <div className="bg-gray-50 p-4 rounded-lg text-left">
-            <h3 className="font-semibold mb-2">後續流程：</h3>
+            <h3 className="font-semibold mb-2">{t('enterprise.success.process.title')}</h3>
             <ul className="space-y-2 text-sm">
-              <li>1. 我們的企業顧問將仔細評估您的需求</li>
-              <li>2. 安排線上或實體會議討論詳細合作方案</li>
-              <li>3. 提供客製化報價與解決方案</li>
+              <li>{t('enterprise.success.process.step1')}</li>
+              <li>{t('enterprise.success.process.step2')}</li>
+              <li>{t('enterprise.success.process.step3')}</li>
             </ul>
           </div>
           
           <p className="text-sm">
-            如有緊急需求，歡迎直接聯繫：
+            {t('enterprise.success.urgent')}
             <br />
             <a href="tel:+886223456789" className="text-blue-600">
               +886 2 2345 6789
@@ -45,7 +47,7 @@ export default function EnterpriseSuccessPage() {
           onClick={() => router.push('/')}
           className="w-full bg-blue-600 text-white rounded-lg px-4 py-3 hover:bg-blue-700 transition duration-150"
         >
-          返回首頁
+          {t('enterprise.success.button')}
         </button>
       </div>
     </div>

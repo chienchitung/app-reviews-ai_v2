@@ -15,7 +15,7 @@ interface Translations {
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: (key: string) => TranslationValue;
+  t: (key: string, variables?: Record<string, string>) => TranslationValue;
 }
 
 const translations: Translations = {
@@ -66,6 +66,20 @@ const translations: Translations = {
     'login.success': '登入成功！',
     'login.error': '登入失敗，請檢查您的帳號密碼',
     
+    // 忘記密碼頁面
+    'forgotPassword.backToLogin': '返回登入',
+    'forgotPassword.title': '重設密碼',
+    'forgotPassword.subtitle': '請輸入您的電子郵件，我們將發送重設密碼的連結給您',
+    'forgotPassword.success': '重設密碼的連結已發送至您的信箱',
+    'forgotPassword.email.placeholder': '電子郵件',
+    'forgotPassword.loading': '處理中...',
+    'forgotPassword.button': '發送重設連結',
+    'forgotPassword.emailSent': '我們已發送重設密碼的連結至 {email}',
+    'forgotPassword.noEmail': '沒收到郵件？',
+    'forgotPassword.resend': '重新發送',
+    'forgotPassword.rememberPassword': '記起密碼了？',
+    'forgotPassword.backToLoginLink': '返回登入',
+    
     // 註冊頁面
     'signup.backToHome': '返回首頁',
     'signup.title': '建立帳號',
@@ -88,7 +102,7 @@ const translations: Translations = {
     'signup.error': '註冊失敗，請稍後再試',
     
     // 分析頁面
-    'analysis.title': '分析結果預覽',
+    'analysis.title': '分��結果預覽',
     'analysis.viewTable': '查看資料表',
     'analysis.filter': '數據篩選',
     'analysis.resetFilter': '重置篩選',
@@ -97,7 +111,7 @@ const translations: Translations = {
     'analysis.fileRequirement': '檔案第一列為欄位標題，至少需包含一個評論內容欄位',
     'analysis.autoAnalysis': '系統將自動分析評論內容，生成以下分析結果：',
     'analysis.features': [
-      '評論分類與情感傾向',
+      '評分類與情感傾向',
       '關鍵詞提取與統計',
       '文字雲視覺化',
       '整體情感分布分析'
@@ -117,7 +131,7 @@ const translations: Translations = {
     
     // 頁尾
     'footer.about': '關於平台',
-    'footer.aboutDesc': 'AppReviews AI提供完整的評論爬取和分析服務，幫助開發者更好地理解用戶需求和反饋。',
+    'footer.aboutDesc': 'AppReviews AI提供完整的評論爬取和分析服��，幫助開發者更好地理解用戶需求和反饋。',
     'footer.quickLinks': '快速連結',
     'footer.contact': '聯絡我們',
     'footer.email': 'Email: support@appreviewsai.com',
@@ -194,7 +208,7 @@ const translations: Translations = {
     'pricing.card.popular': '熱門方案',
     'pricing.card.features': '包含功能',
     'pricing.card.perMonth': '/月',
-    'pricing.card.button.free': '立即開���',
+    'pricing.card.button.free': '立即開始',
     'pricing.card.button.pro': '選擇方案',
     'pricing.card.button.enterprise': '聯繫我們',
     
@@ -227,7 +241,7 @@ const translations: Translations = {
       '在儀表板查看爬取進度',
       '下載評論數據（Excel格式）'
     ],
-    'learn.images.analysis.dashboard': '評論分析儀���',
+    'learn.images.analysis.dashboard': '評論分析儀',
     'learn.images.analysis.results': '分析結果展示',
     'learn.images.scraper.setup': '爬取任務設定',
     'learn.images.scraper.results': '爬取結果管理',
@@ -238,7 +252,7 @@ const translations: Translations = {
     'terms.section1.title': '1. 服務範圍',
     'terms.section1.description': 'AppReviews AI 提供以下服務：',
     'terms.section1.item1': 'App 評論分析與洞察',
-    'terms.section1.item2': '自動化評論回覆建議',
+    'terms.section1.item2': '自動化評論回��建議',
     'terms.section1.item3': '評論情緒分析',
     'terms.section1.item4': '競品分析報告',
 
@@ -285,7 +299,7 @@ const translations: Translations = {
     'privacy.section1.item1': '基本資料（姓名、電子郵件）',
     'privacy.section1.item2': '使用數據（登入時間、功能使用記錄）',
     'privacy.section1.item3': '裝置資訊（IP 位址、瀏覽器類型）',
-    'privacy.section1.item4': '付款資訊（信用卡後四碼、交易記錄）',
+    'privacy.section1.item4': '��款資訊（信用卡後四碼、交易記錄）',
 
     'privacy.section2.title': '2. 資料使用',
     'privacy.section2.description': '我們使用收集的資料用於：',
@@ -311,7 +325,7 @@ const translations: Translations = {
     'privacy.section5.title': '5. 第三方服務',
     'privacy.section5.description': '我們可能使用第三方服務來：',
     'privacy.section5.item1': '處理付款',
-    'privacy.section5.item2': '分析使用數據',
+    'privacy.section5.item2': '分析��用數據',
     'privacy.section5.item3': '提供客戶支援',
     'privacy.section5.item4': '發送電子郵件通知',
 
@@ -321,6 +335,63 @@ const translations: Translations = {
     'privacy.section6.item2': '要求刪除帳戶',
     'privacy.section6.item3': '選擇退出電子郵件通知',
     'privacy.section6.item4': '提出隱私相關問題',
+
+    // 付款頁面
+    'checkout.title': '付款資訊',
+    'checkout.cardHolder': '持卡人姓名',
+    'checkout.cardHolder.placeholder': '請輸入持卡人姓名',
+    'checkout.cardNumber': '信用卡號碼',
+    'checkout.cardNumber.placeholder': '1234 5678 9012 3456',
+    'checkout.expiry': '有效期限',
+    'checkout.expiry.placeholder': 'MM/YY',
+    'checkout.cvc': 'CVC/CVV',
+    'checkout.cvc.placeholder': '信用卡末三碼',
+    'checkout.button': '確認付款 {price}',
+    'checkout.processing': '處理中...',
+    'checkout.error.invalidCard': '請輸入16位數信用卡號碼',
+    'checkout.error.paymentFailed': '付款失敗，請稍後再試',
+    
+    // 付款成功頁面
+    'payment.success.title': '付款成功！',
+    'payment.success.subtitle': '感謝您訂閱我們的專業版服務',
+    'payment.success.description': '您現在可以使用所有進階功���',
+    'payment.success.emailNotice': '訂閱確認信已發送至您的信箱',
+    'payment.success.button': '返回首頁開始使用',
+    
+    // 企業方案諮詢頁面
+    'enterprise.title': '企業方案諮詢',
+    'enterprise.subtitle': '讓我們為您的企業打造最適合的解決方案',
+    'enterprise.form.companyName': '公司名稱',
+    'enterprise.form.companyName.placeholder': '請輸入公司名稱',
+    'enterprise.form.contactPerson': '聯絡人姓名',
+    'enterprise.form.contactPerson.placeholder': '請輸入聯絡人姓名',
+    'enterprise.form.email': '電子郵件',
+    'enterprise.form.email.placeholder': '請輸入電子郵件',
+    'enterprise.form.phone': '聯絡電話',
+    'enterprise.form.phone.placeholder': '請輸入聯絡電話',
+    'enterprise.form.message': '需求說明',
+    'enterprise.form.message.placeholder': '請描述您的需求...',
+    'enterprise.form.submit': '提交諮詢',
+    'enterprise.form.submitting': '提交中...',
+    'enterprise.error.submitFailed': '提交失敗，請稍後再試',
+    'enterprise.features.title': '企業方案特色',
+    'enterprise.features.support.title': '專屬客戶經理',
+    'enterprise.features.support.description': '一對一專屬服務，快速回應您的需求',
+    'enterprise.features.customization.title': '客製化解決方案',
+    'enterprise.features.customization.description': '根據您的業務需求打造專屬分析模型',
+    'enterprise.features.technical.title': '24/7 技術支援',
+    'enterprise.features.technical.description': '全天候技術團隊支援，確保服務穩定運行',
+    'enterprise.features.contact.title': '聯絡方式',
+    
+    // 企業方案諮詢成功頁面
+    'enterprise.success.title': '表單提交成功！',
+    'enterprise.success.response': '預計 1-3 個工作天內與您聯繫',
+    'enterprise.success.process.title': '後續流程：',
+    'enterprise.success.process.step1': '1. 我們的企業顧問將仔細評估您的需求',
+    'enterprise.success.process.step2': '2. 安排線上或實體會議討論詳細合作方案',
+    'enterprise.success.process.step3': '3. 提供客製化報價與解決方案',
+    'enterprise.success.urgent': '如有緊急需求，歡迎直接聯繫：',
+    'enterprise.success.button': '返回首頁',
   },
   en: {
     // Navigation
@@ -368,6 +439,20 @@ const translations: Translations = {
     'login.signup': 'Sign up now',
     'login.success': 'Login successful!',
     'login.error': 'Login failed, please check your credentials',
+    
+    // Forgot Password Page
+    'forgotPassword.backToLogin': 'Back to Login',
+    'forgotPassword.title': 'Reset Password',
+    'forgotPassword.subtitle': 'Enter your email and we will send you a password reset link',
+    'forgotPassword.success': 'Password reset link has been sent to your email',
+    'forgotPassword.email.placeholder': 'Email',
+    'forgotPassword.loading': 'Processing...',
+    'forgotPassword.button': 'Send Reset Link',
+    'forgotPassword.emailSent': 'We have sent a password reset link to {email}',
+    'forgotPassword.noEmail': 'Did not receive the email?',
+    'forgotPassword.resend': 'Resend',
+    'forgotPassword.rememberPassword': 'Remember your password?',
+    'forgotPassword.backToLoginLink': 'Back to Login',
     
     // Signup Page
     'signup.backToHome': 'Back to Home',
@@ -461,10 +546,10 @@ const translations: Translations = {
     
     // Pricing Page
     'pricing.title': 'Choose Your Plan',
-    'pricing.subtitle': 'Whether you\'re an individual user or an enterprise, we have the right solution for you',
+    'pricing.subtitle': 'Whether you are an individual user or an enterprise, we have a solution for you',
     'pricing.plan.free.name': 'Basic',
     'pricing.plan.free.price': 'Free',
-    'pricing.plan.free.description': 'Perfect for individual users',
+    'pricing.plan.free.description': 'Perfect for individuals',
     'pricing.plan.free.features': [
       '100 reviews analysis per month',
       'Basic sentiment analysis',
@@ -473,7 +558,7 @@ const translations: Translations = {
     ],
     'pricing.plan.pro.name': 'Professional',
     'pricing.plan.pro.price': 'NT$ 499',
-    'pricing.plan.pro.description': 'Ideal for small businesses',
+    'pricing.plan.pro.description': 'Perfect for small businesses',
     'pricing.plan.pro.features': [
       '1,000 reviews analysis per month',
       'Advanced sentiment analysis',
@@ -484,7 +569,7 @@ const translations: Translations = {
     ],
     'pricing.plan.enterprise.name': 'Enterprise',
     'pricing.plan.enterprise.price': 'Contact Sales',
-    'pricing.plan.enterprise.description': 'For large enterprises',
+    'pricing.plan.enterprise.description': 'Perfect for large enterprises',
     'pricing.plan.enterprise.features': [
       'Unlimited review analysis',
       'Custom analysis models',
@@ -624,6 +709,63 @@ const translations: Translations = {
     'privacy.section6.item2': 'Requesting account deletion',
     'privacy.section6.item3': 'Choosing to opt out of email notifications',
     'privacy.section6.item4': 'Raising privacy-related issues',
+
+    // Checkout Page
+    'checkout.title': 'Payment Information',
+    'checkout.cardHolder': 'Cardholder Name',
+    'checkout.cardHolder.placeholder': 'Enter cardholder name',
+    'checkout.cardNumber': 'Card Number',
+    'checkout.cardNumber.placeholder': '1234 5678 9012 3456',
+    'checkout.expiry': 'Expiry Date',
+    'checkout.expiry.placeholder': 'MM/YY',
+    'checkout.cvc': 'CVC/CVV',
+    'checkout.cvc.placeholder': 'Security code',
+    'checkout.button': 'Pay {price}',
+    'checkout.processing': 'Processing...',
+    'checkout.error.invalidCard': 'Please enter a valid 16-digit card number',
+    'checkout.error.paymentFailed': 'Payment failed, please try again later',
+    
+    // Payment Success Page
+    'payment.success.title': 'Payment Successful!',
+    'payment.success.subtitle': 'Thank you for subscribing to our Professional plan',
+    'payment.success.description': 'You now have access to all premium features',
+    'payment.success.emailNotice': 'A confirmation email has been sent to your inbox',
+    'payment.success.button': 'Back to Home',
+    
+    // Enterprise Page
+    'enterprise.title': 'Enterprise Solutions',
+    'enterprise.subtitle': 'Let us create the perfect solution for your business',
+    'enterprise.form.companyName': 'Company Name',
+    'enterprise.form.companyName.placeholder': 'Enter company name',
+    'enterprise.form.contactPerson': 'Contact Person',
+    'enterprise.form.contactPerson.placeholder': 'Enter contact person name',
+    'enterprise.form.email': 'Email',
+    'enterprise.form.email.placeholder': 'Enter email address',
+    'enterprise.form.phone': 'Phone',
+    'enterprise.form.phone.placeholder': 'Enter phone number',
+    'enterprise.form.message': 'Message',
+    'enterprise.form.message.placeholder': 'Describe your requirements...',
+    'enterprise.form.submit': 'Submit Inquiry',
+    'enterprise.form.submitting': 'Submitting...',
+    'enterprise.error.submitFailed': 'Submission failed, please try again later',
+    'enterprise.features.title': 'Enterprise Features',
+    'enterprise.features.support.title': 'Dedicated Account Manager',
+    'enterprise.features.support.description': 'One-on-one dedicated service, quick response to your needs',
+    'enterprise.features.customization.title': 'Custom Solutions',
+    'enterprise.features.customization.description': 'Tailored analysis models based on your business needs',
+    'enterprise.features.technical.title': '24/7 Technical Support',
+    'enterprise.features.technical.description': 'Round-the-clock technical team support for stable service',
+    'enterprise.features.contact.title': 'Contact Information',
+    
+    // Enterprise Success Page
+    'enterprise.success.title': 'Form Submitted Successfully!',
+    'enterprise.success.response': 'We will contact you within 1-3 business days',
+    'enterprise.success.process.title': 'Next Steps:',
+    'enterprise.success.process.step1': '1. Our enterprise consultant will carefully evaluate your needs',
+    'enterprise.success.process.step2': '2. Schedule online or in-person meeting to discuss detailed solutions',
+    'enterprise.success.process.step3': '3. Provide customized quotation and solutions',
+    'enterprise.success.urgent': 'For urgent inquiries, please contact us directly:',
+    'enterprise.success.button': 'Back to Home',
   }
 };
 
@@ -632,19 +774,26 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguage] = useState<Language>('zh');
 
-  const t = (key: string): TranslationValue => {
-    const currentTranslations = translations[language];
-    return currentTranslations[key] || key;
-  };
+  const t = (key: string, variables?: Record<string, string>): TranslationValue => {
+    const translation = translations[language]?.[key];
+    if (!translation) return key;
 
-  const value = {
-    language,
-    setLanguage,
-    t,
+    if (Array.isArray(translation)) {
+      return translation;
+    }
+
+    if (variables && typeof translation === 'string') {
+      return Object.entries(variables).reduce(
+        (text, [key, value]) => text.replace(`{${key}}`, value),
+        translation
+      );
+    }
+
+    return translation;
   };
 
   return (
-    <LanguageContext.Provider value={value}>
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );

@@ -18,8 +18,8 @@ const LogoSVG = () => (
 );
 
 const productCategories = [
-  { title: 'nav.features.reviewAnalysis', link: '/analysis' },
-  { title: 'nav.features.dataScraping', link: '/scraper' },
+  { title: 'features.reviewAnalysis', link: '/analysis' },
+  { title: 'features.dataScraping', link: '/scraper' },
   { title: 'nav.pricing', link: '/pricing' },
   { title: 'nav.learningCenter', link: '/learn' },
 ];
@@ -122,12 +122,24 @@ export default function Navbar({}: NavbarProps) {
               </li>
               <li>
                 <Link 
-                  href="/analysis"
+                  href="/scraper"
                   className="flex items-center py-3 px-4 text-lg text-white bg-[#0066FF] hover:bg-[#0052CC] rounded-md font-medium"
                   onClick={() => setMenuOpen(false)}
                 >
                   {t('nav.startFree')}
                 </Link>
+              </li>
+              <li className="pt-4 border-t">
+                <button
+                  onClick={() => {
+                    setLanguage(language === 'zh' ? 'en' : 'zh');
+                    setMenuOpen(false);
+                  }}
+                  className="flex items-center py-3 px-4 text-lg text-gray-700 hover:bg-gray-100 rounded-md font-medium w-full"
+                >
+                  <Globe className="h-5 w-5 mr-2" />
+                  <span>{language === 'zh' ? 'English' : '中文'}</span>
+                </button>
               </li>
             </ul>
           </nav>
@@ -138,89 +150,90 @@ export default function Navbar({}: NavbarProps) {
       <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-gray-100 z-50">
         <nav className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between h-16">
-            <div className="flex items-center space-x-8">
-              <Link href="/" className="flex items-center space-x-2">
+            {/* Logo 和導航項目容器 */}
+            <div className="flex items-center flex-shrink-0">
+              <Link href="/" className="flex items-center space-x-2 mr-8">
                 <LogoSVG />
-                <span className="text-xl font-bold">
+                <span className="text-xl font-bold whitespace-nowrap">
                   AppReviews AI
                 </span>
               </Link>
 
-              <div
-                className="relative hidden md:block"
-                ref={dropdownRef}
-              >
-                <button 
-                  className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 flex items-center"
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                  onMouseEnter={() => setDropdownOpen(true)}
+              <div className="hidden md:flex items-center space-x-1">
+                <div
+                  className="relative"
+                  ref={dropdownRef}
                 >
-                  {t('nav.features')}
-                  {dropdownOpen ? (
-                    <ChevronUp className="ml-1 h-4 w-4" />
-                  ) : (
-                    <ChevronDown className="ml-1 h-4 w-4" />
-                  )}
-                </button>
-                {dropdownOpen && (
-                  <div
-                    className="absolute left-0 mt-2 w-72 bg-white border border-gray-200 rounded-md shadow-lg p-4"
-                    onMouseLeave={() => setDropdownOpen(false)}
+                  <button 
+                    className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 flex items-center whitespace-nowrap"
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    onMouseEnter={() => setDropdownOpen(true)}
                   >
-                    <Link
-                      href="/analysis"
-                      className="block px-4 py-2 text-sm font-bold text-gray-700 hover:bg-gray-100"
+                    {t('nav.features')}
+                    {dropdownOpen ? (
+                      <ChevronUp className="ml-1 h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="ml-1 h-4 w-4" />
+                    )}
+                  </button>
+                  {dropdownOpen && (
+                    <div
+                      className="absolute left-0 mt-2 w-72 bg-white border border-gray-200 rounded-md shadow-lg p-4"
+                      onMouseLeave={() => setDropdownOpen(false)}
                     >
-                      {t('features.reviewAnalysis')}
-                      <p className="text-xs text-gray-500">{t('features.reviewAnalysis.desc')}</p>
-                    </Link>
-                    <Link
-                      href="/scraper"
-                      className="block px-4 py-2 text-sm font-bold text-gray-700 hover:bg-gray-100"
-                    >
-                      {t('features.dataScraping')}
-                      <p className="text-xs text-gray-500">{t('features.dataScraping.desc')}</p>
-                    </Link>
-                  </div>
-                )}
-              </div>
+                      <Link
+                        href="/analysis"
+                        className="block px-4 py-2 text-sm font-bold text-gray-700 hover:bg-gray-100 rounded-md"
+                      >
+                        {t('features.reviewAnalysis')}
+                        <p className="text-xs text-gray-500 font-normal">{t('features.reviewAnalysis.desc')}</p>
+                      </Link>
+                      <Link
+                        href="/scraper"
+                        className="block px-4 py-2 text-sm font-bold text-gray-700 hover:bg-gray-100 rounded-md mt-2"
+                      >
+                        {t('features.dataScraping')}
+                        <p className="text-xs text-gray-500 font-normal">{t('features.dataScraping.desc')}</p>
+                      </Link>
+                    </div>
+                  )}
+                </div>
 
-              <Link 
-                href="/pricing" 
-                className="hidden md:block px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
-              >
-                {t('nav.pricing')}
-              </Link>
-              <Link 
-                href="/learn" 
-                className="hidden md:block px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
-              >
-                {t('nav.learningCenter')}
-              </Link>
+                <Link 
+                  href="/pricing" 
+                  className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 whitespace-nowrap"
+                >
+                  {t('nav.pricing')}
+                </Link>
+                <Link 
+                  href="/learn" 
+                  className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 whitespace-nowrap"
+                >
+                  {t('nav.learningCenter')}
+                </Link>
+              </div>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <div className="hidden md:flex items-center space-x-4">
+            {/* 右側按鈕組 */}
+            <div className="flex items-center space-x-2">
+              <div className="hidden md:flex items-center space-x-2">
                 {/* 語言切換按鈕 */}
                 <button
                   onClick={() => setLanguage(language === 'zh' ? 'en' : 'zh')}
-                  className="flex items-center space-x-1 text-gray-700 hover:text-gray-900"
+                  className="flex items-center space-x-1 px-2 py-1 text-gray-700 hover:text-gray-900 rounded-md hover:bg-gray-100"
                 >
                   <Globe className="h-4 w-4" />
                   <span className="text-sm font-medium">{language.toUpperCase()}</span>
                 </button>
                 <Link 
                   href="/login" 
-                  className="text-gray-700 hover:text-gray-900 text-sm font-medium"
+                  className="px-3 py-2 text-gray-700 hover:text-gray-900 text-sm font-medium whitespace-nowrap"
                 >
                   {t('nav.login')}
                 </Link>
                 <Link 
                   href="/scraper"
-                  className="inline-flex items-center px-4 py-2 rounded-lg
-                    bg-[#0066FF] hover:bg-[#0052CC]
-                    text-white text-sm font-medium
-                    transition-colors duration-200"
+                  className="px-4 py-2 rounded-lg bg-[#0066FF] hover:bg-[#0052CC] text-white text-sm font-medium transition-colors duration-200 whitespace-nowrap"
                 >
                   {t('nav.startFree')}
                 </Link>

@@ -2,12 +2,14 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function CheckoutPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [expiry, setExpiry] = useState('');
   const [cardNumber, setCardNumber] = useState('');
+  const { t } = useLanguage();
 
   // 處理信用卡號碼格式化
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,7 +69,7 @@ export default function CheckoutPage() {
     // 移除信用卡號碼中的空格進行驗證
     const cleanCardNumber = cardNumber.replace(/\s/g, '');
     if (cleanCardNumber.length !== 16) {
-      alert('請輸入16位數信用卡號碼');
+      alert(t('checkout.error.invalidCard'));
       setLoading(false);
       return;
     }
@@ -78,6 +80,7 @@ export default function CheckoutPage() {
       router.push('/payment/success');
     } catch (error) {
       console.error('付款錯誤:', error);
+      alert(t('checkout.error.paymentFailed'));
     } finally {
       setLoading(false);
     }
@@ -87,23 +90,26 @@ export default function CheckoutPage() {
     <div className="min-h-screen bg-gray-50 py-24">
       <div className="max-w-md mx-auto px-4 sm:px-6">
         <div className="bg-white rounded-lg shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">付款資訊</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            {t('checkout.title')}
+          </h2>
           
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                持卡人姓名
+                {t('checkout.cardHolder')}
               </label>
               <input
                 type="text"
                 required
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+                placeholder={t('checkout.cardHolder.placeholder') as string}
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                信用卡號碼
+                {t('checkout.cardNumber')}
               </label>
               <input
                 type="tel"
@@ -111,7 +117,7 @@ export default function CheckoutPage() {
                 required
                 value={cardNumber}
                 onChange={handleCardNumberChange}
-                placeholder="1234 5678 9012 3456"
+                placeholder={t('checkout.cardNumber.placeholder') as string}
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
               />
             </div>
@@ -119,7 +125,7 @@ export default function CheckoutPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  有效期限
+                  {t('checkout.expiry')}
                 </label>
                 <input
                   type="tel"
@@ -127,14 +133,14 @@ export default function CheckoutPage() {
                   required
                   value={expiry}
                   onChange={handleExpiryChange}
-                  placeholder="MM/YY"
+                  placeholder={t('checkout.expiry.placeholder') as string}
                   maxLength={5}
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  CVC/CVV
+                  {t('checkout.cvc')}
                 </label>
                 <input
                   type="tel"
@@ -142,7 +148,7 @@ export default function CheckoutPage() {
                   required
                   pattern="\d{3}"
                   maxLength={3}
-                  placeholder="信用卡末三碼"
+                  placeholder={t('checkout.cvc.placeholder') as string}
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
                 />
               </div>
@@ -156,7 +162,7 @@ export default function CheckoutPage() {
                   loading ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
-                {loading ? '處理中...' : '確認付款 NT$ 499'}
+                {loading ? t('checkout.processing') : t('checkout.button', { price: 'NT$ 499' })}
               </button>
             </div>
           </form>

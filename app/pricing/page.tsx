@@ -12,7 +12,7 @@ export default function PricingPage() {
       name: t('pricing.plan.free.name') as string,
       price: t('pricing.plan.free.price') as string,
       description: t('pricing.plan.free.description') as string,
-      features: t('pricing.plan.free.features') as string[],
+      features: (t('pricing.plan.free.features') || []) as string[],
       popular: false,
       type: 'free' as const
     },
@@ -20,7 +20,7 @@ export default function PricingPage() {
       name: t('pricing.plan.pro.name') as string,
       price: t('pricing.plan.pro.price') as string,
       description: t('pricing.plan.pro.description') as string,
-      features: t('pricing.plan.pro.features') as string[],
+      features: (t('pricing.plan.pro.features') || []) as string[],
       popular: true,
       type: 'pro' as const
     },
@@ -28,7 +28,7 @@ export default function PricingPage() {
       name: t('pricing.plan.enterprise.name') as string,
       price: t('pricing.plan.enterprise.price') as string,
       description: t('pricing.plan.enterprise.description') as string,
-      features: t('pricing.plan.enterprise.features') as string[],
+      features: (t('pricing.plan.enterprise.features') || []) as string[],
       type: 'enterprise' as const
     }
   ];
