@@ -107,6 +107,26 @@ const validateDateInput = (dateString: string) => {
   return dateParts.join('-');
 };
 
+// 新增日期格式化顯示函數
+const formatDisplayDate = (dateString: string) => {
+  if (!dateString) return '';
+  return dateString; // 保持 YYYY-MM-DD 格式
+};
+
+// 新增日期本地化格式轉換函數
+const convertLocaleDateToISO = (dateString: string) => {
+  if (!dateString) return '';
+  
+  // 處理 "YYYY年MM月DD日" 格式
+  const matches = dateString.match(/(\d{4})年(\d{1,2})月(\d{1,2})日?/);
+  if (matches) {
+    const [_, year, month, day] = matches;
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+  
+  return dateString;
+};
+
 export default function AnalysisPage() {
   const [file, setFile] = useState<File | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -489,13 +509,6 @@ export default function AnalysisPage() {
     setShowDatePicker(false);
   };
 
-  // 新增日期格式化函數
-  const formatDisplayDate = (dateString: string) => {
-    if (!dateString) return '';
-    const [year, month, day] = dateString.split('-');
-    return `${year}-${month}-${day}`;
-  };
-
   return (
     <main className="max-w-7xl mx-auto px-4 pt-24 pb-16">
       {/* 使用說明區塊 */}
@@ -846,8 +859,11 @@ export default function AnalysisPage() {
                               type="date"
                               value={filters.dateRange.start}
                               onChange={(e) => {
-                                const validatedDate = validateDateInput(e.target.value);
-                                if (validatedDate !== e.target.value) {
+                                let value = e.target.value;
+                                // 轉換本地化格式
+                                value = convertLocaleDateToISO(value);
+                                const validatedDate = validateDateInput(value);
+                                if (validatedDate !== value) {
                                   e.target.value = validatedDate;
                                 }
                                 handleFilterChange({
@@ -857,14 +873,18 @@ export default function AnalysisPage() {
                               }}
                               onInput={(e) => {
                                 const input = e.target as HTMLInputElement;
-                                const validatedDate = validateDateInput(input.value);
-                                if (validatedDate !== input.value) {
+                                let value = input.value;
+                                // 轉換本地化格式
+                                value = convertLocaleDateToISO(value);
+                                const validatedDate = validateDateInput(value);
+                                if (validatedDate !== value) {
                                   input.value = validatedDate;
                                 }
                               }}
-                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm [&::-webkit-calendar-picker-indicator]:bg-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-datetime-edit]:p-0"
                               placeholder="YYYY-MM-DD"
                               max="9999-12-31"
+                              pattern="\d{4}-\d{2}-\d{2}"
                             />
                           </div>
                           <div className="space-y-1">
@@ -873,8 +893,11 @@ export default function AnalysisPage() {
                               type="date"
                               value={filters.dateRange.end}
                               onChange={(e) => {
-                                const validatedDate = validateDateInput(e.target.value);
-                                if (validatedDate !== e.target.value) {
+                                let value = e.target.value;
+                                // 轉換本地化格式
+                                value = convertLocaleDateToISO(value);
+                                const validatedDate = validateDateInput(value);
+                                if (validatedDate !== value) {
                                   e.target.value = validatedDate;
                                 }
                                 handleFilterChange({
@@ -884,14 +907,18 @@ export default function AnalysisPage() {
                               }}
                               onInput={(e) => {
                                 const input = e.target as HTMLInputElement;
-                                const validatedDate = validateDateInput(input.value);
-                                if (validatedDate !== input.value) {
+                                let value = input.value;
+                                // 轉換本地化格式
+                                value = convertLocaleDateToISO(value);
+                                const validatedDate = validateDateInput(value);
+                                if (validatedDate !== value) {
                                   input.value = validatedDate;
                                 }
                               }}
-                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm [&::-webkit-calendar-picker-indicator]:bg-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-datetime-edit]:p-0"
                               placeholder="YYYY-MM-DD"
                               max="9999-12-31"
+                              pattern="\d{4}-\d{2}-\d{2}"
                             />
                           </div>
                         </div>
