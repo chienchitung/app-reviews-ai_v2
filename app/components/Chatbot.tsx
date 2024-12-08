@@ -298,30 +298,6 @@ ${userMessage.content}
 
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
-  // 修改初始訊息的設定方式
-  const initialMessage: Message = {
-    role: 'assistant',
-    content: '您好！我是您的 AI小助手。我可以：\n1. 協助您了解平台功能與操作方式\n2. 提供專業的數據分析建議\n\n請問有什麼我可以幫您的嗎？'
-  };
-
-  // 使用 useEffect 來初始化訊息，只在組件首次載入時執行
-  useEffect(() => {
-    // 檢查是否有儲存的對話紀錄
-    const savedMessages = localStorage.getItem('chatMessages');
-    if (savedMessages) {
-      setMessages(JSON.parse(savedMessages));
-    } else {
-      setMessages([initialMessage]);
-    }
-  }, []);
-
-  // 當訊息更新時，儲存到 localStorage
-  useEffect(() => {
-    if (messages.length > 0) {
-      localStorage.setItem('chatMessages', JSON.stringify(messages));
-    }
-  }, [messages]);
-
   // 修改開關視窗的處理函數
   const handleToggleChat = () => {
     setIsOpen(!isOpen);
@@ -331,10 +307,12 @@ ${userMessage.content}
     }
   };
 
-  // 新增清除對話紀錄的功能
+  // 修改清除對話紀錄的功能
   const handleClearChat = () => {
-    setMessages([initialMessage]);
-    localStorage.removeItem('chatMessages');
+    setMessages([{
+      role: 'assistant',
+      content: '您好！我是您的 AI小助手。我可以：\n1. 協助您了解平台功能與操作方式\n2. 提供專業的數據分析建議\n\n請問有什麼我可以幫您的嗎？'
+    }]);
   };
 
   // 新增一個 ref 來追蹤訊息容器
