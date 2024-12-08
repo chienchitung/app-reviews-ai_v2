@@ -3,14 +3,26 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 處理登入邏輯
+    
+    try {
+      // 這裡處理登入邏輯
+      // 假設登入成功
+      localStorage.setItem('isLoggedIn', 'true');
+      alert('登入成功！');
+      router.push('/scraper');
+    } catch (error) {
+      console.error('登入失敗:', error);
+      alert('登入失敗，請檢查您的帳號密碼');
+    }
   };
 
   return (

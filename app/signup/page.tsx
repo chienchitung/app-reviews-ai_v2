@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
@@ -11,9 +12,20 @@ export default function SignupPage() {
   const [name, setName] = useState('');
   const [agreed, setAgreed] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 處理註冊邏輯
+    
+    try {
+      // 這裡處理註冊邏輯
+      // 假設註冊成功
+      alert('註冊成功！請登入您的帳號');
+      router.push('/login');
+    } catch (error) {
+      console.error('註冊失敗:', error);
+      alert('註冊失敗，請稍後再試');
+    }
   };
 
   return (
@@ -144,7 +156,7 @@ export default function SignupPage() {
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.164 6.839 9.49.5.09.682-.218.682-.486 0-.236-.009-.866-.013-1.695-2.782.603-3.369-1.338-3.369-1.338-.454-1.152-1.11-1.459-1.11-1.459-.908-.619.069-.605.069-.605 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.022A9.606 9.606 0 0112 6.82c.85.004 1.705.115 2.504.337 1.909-1.291 2.747-1.022 2.747-1.022.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .27.18.583.688.485C19.138 20.161 22 16.416 22 12c0-5.523-4.477-10-10-10z"/>
               </svg>
-              <span className="font-medium">使用 GitHub 帳號註冊</span>
+              <span className="font-medium">使用 GitHub 帳���註冊</span>
             </button>
           </div>
 
