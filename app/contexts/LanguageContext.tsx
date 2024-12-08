@@ -102,21 +102,22 @@ const translations: Translations = {
     'signup.error': '註冊失敗，請稍後再試',
     
     // 分析頁面
-    'analysis.title': '分��結果預覽',
+    'analysis.title': '使用說明',
     'analysis.viewTable': '查看資料表',
     'analysis.filter': '數據篩選',
     'analysis.resetFilter': '重置篩選',
     'analysis.uploadTitle': '上傳檔案',
-    'analysis.uploadDesc': '上傳包含用戶評論的CSV或Excel檔案（僅支援.csv、.xlsx、.xls格式）',
-    'analysis.fileRequirement': '檔案第一列為欄位標題，至少需包含一個評論內容欄位',
-    'analysis.autoAnalysis': '系統將自動分析評論內容，生成以下分析結果：',
+    'analysis.uploadDesc': '1. 上傳包含用戶評論的CSV或Excel檔案（僅支援.csv、.xlsx、.xls格式）',
+    'analysis.uploadDragText': '拖放CSV或Excel檔案到此處，或點擊選擇檔案',
+    'analysis.fileRequirement': '2. 檔案第一列應為欄位標題，至少需包含一個評論內容欄位',
+    'analysis.autoAnalysis': '3. 系統將自動分析評論內容，生成以下分析結果：',
     'analysis.features': [
       '評分類與情感傾向',
       '關鍵詞提取與統計',
       '文字雲視覺化',
       '整體情感分布分析'
     ],
-    'analysis.generateReport': '分析完成後可生成詳細洞察報告',
+    'analysis.generateReport': '4. 分析完成後可生成詳細洞察報告',
     
     // 爬蟲頁面
     'scraper.title': '應用程式評論爬取',
@@ -382,7 +383,7 @@ const translations: Translations = {
     'enterprise.error.submitFailed': '提交失敗，請稍後再試',
     'enterprise.features.title': '企業方案特色',
     'enterprise.features.support.title': '專屬客戶經理',
-    'enterprise.features.support.description': '一對一專��服務，快速回應您的需求',
+    'enterprise.features.support.description': '一對一專服務，快速回應您的需求',
     'enterprise.features.customization.title': '客製化解決方案',
     'enterprise.features.customization.description': '根據您的業務需求打造專屬分析模型',
     'enterprise.features.technical.title': '24/7 技術支援',
@@ -496,21 +497,22 @@ const translations: Translations = {
     'signup.error': 'Registration failed, please try again later',
     
     // Analysis Page
-    'analysis.title': 'Analysis Preview',
+    'analysis.title': 'Instructions',
     'analysis.viewTable': 'View Data Table',
     'analysis.filter': 'Data Filter',
     'analysis.resetFilter': 'Reset Filters',
     'analysis.uploadTitle': 'Upload File',
-    'analysis.uploadDesc': 'Upload CSV or Excel file containing user reviews (supports .csv, .xlsx, .xls)',
-    'analysis.fileRequirement': 'First row should be column headers, must include at least one review content column',
-    'analysis.autoAnalysis': 'The system will automatically analyze review content and generate the following results:',
+    'analysis.uploadDesc': '1. Upload CSV or Excel file containing user reviews (supports .csv, .xlsx, .xls)',
+    'analysis.uploadDragText': 'Drag and drop CSV or Excel file here, or click to select',
+    'analysis.fileRequirement': '2. First row should be column headers, must include at least one review content column',
+    'analysis.autoAnalysis': '3. The system will automatically analyze review content and generate the following results:',
     'analysis.features': [
       'Review Classification and Sentiment Analysis',
       'Keyword Extraction and Statistics',
       'Word Cloud Visualization',
       'Overall Sentiment Distribution Analysis'
     ],
-    'analysis.generateReport': 'Generate detailed insight report after analysis',
+    'analysis.generateReport': '4. Generate detailed insight report after analysis',
     
     // Scraper Page
     'scraper.title': 'App Review Scraper',

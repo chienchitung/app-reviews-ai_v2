@@ -8,6 +8,7 @@ import { KeywordsBarChart } from '../components/charts/KeywordsBarChart';
 import { WordCloud } from '../components/charts/WordCloud';
 import { MonthlyTrendChart, RatingDistributionChart } from '../components/charts/TrendChart';
 import { CategoryBarChart } from '../components/charts/CategoryBarChart';
+import { useLanguage } from '../contexts/LanguageContext';
 
 // 自定義 Logo SVG 組件 - AI 字樣
 const LogoSVG = () => (
@@ -128,6 +129,7 @@ const convertLocaleDateToISO = (dateString: string) => {
 };
 
 export default function AnalysisPage() {
+  const { t } = useLanguage();  // 新增這行
   const [file, setFile] = useState<File | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
@@ -366,7 +368,7 @@ export default function AnalysisPage() {
 
       // 更新分析結果
       setAnalysisResult({
-        ...originalData,  // 保持原始數據的其他屬性
+        ...originalData,  // 保持原始數據的其��屬性
         feedbacks: filteredData,
         summary,
         keywords
@@ -520,18 +522,17 @@ export default function AnalysisPage() {
             </svg>
           </div>
           <div>
-            <h3 className="font-semibold text-blue-900 mb-2">使用說明</h3>
+            <h3 className="font-semibold text-blue-900 mb-2">{t('analysis.title')}</h3>
             <div className="space-y-2 text-sm text-blue-800">
-              <p>1. 上包含用戶評論的CSV或Excel檔案（僅支援.csv、.xlsx、.xls格式）</p>
-              <p>2. 檔案第一列應為欄位標題，至少需包含一個評論內容欄位</p>
-              <p>3. 系統將自動分析評論內容，生成以下分析結果：</p>
+              <p>{t('analysis.uploadDesc')}</p>
+              <p>{t('analysis.fileRequirement')}</p>
+              <p>{t('analysis.autoAnalysis')}</p>
               <ul className="list-disc list-inside pl-4 space-y-1">
-                <li>評論分類與情感傾向</li>
-                <li>關鍵詞提取與統計</li>
-                <li>文字雲視覺化</li>
-                <li>整體情感分布分析</li>
+                {(t('analysis.features') as string[]).map((feature, index) => (
+                  <li key={index}>{feature}</li>
+                ))}
               </ul>
-              <p>4. 分析完成後可生成詳細洞察報告</p>
+              <p>{t('analysis.generateReport')}</p>
             </div>
           </div>
         </div>
@@ -539,7 +540,7 @@ export default function AnalysisPage() {
 
       {/* 檔案上傳區域 */}
       <section className="mb-12 bg-white rounded-xl p-6 shadow-sm">
-        <h2 className="text-xl font-semibold mb-4">上傳檔案</h2>
+        <h2 className="text-xl font-semibold mb-4">{t('analysis.uploadTitle')}</h2>
         <div 
           className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-500 transition-colors"
           onClick={handleUploadClick}
@@ -560,7 +561,7 @@ export default function AnalysisPage() {
               </svg>
               <p className="text-gray-600 dark:text-gray-300">{file.name}</p>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                點擊重新選擇檔案
+                {t('button.upload')}
               </p>
             </div>
           ) : (
@@ -571,10 +572,7 @@ export default function AnalysisPage() {
                 </svg>
               </div>
               <p className="text-gray-600 dark:text-gray-300 mb-2">
-                拖放CSV或Excel檔案到此處
-              </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                或點擊選擇檔案
+                {t('analysis.uploadDragText')}
               </p>
             </>
           )}
@@ -594,14 +592,14 @@ export default function AnalysisPage() {
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              <span>分析中...</span>
+              <span>{t('scraper.processing')}</span>
             </>
           ) : (
             <>
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
               </svg>
-              <span>開始分析</span>
+              <span>{t('scraper.startScraping')}</span>
             </>
           )}
         </button>
@@ -611,7 +609,7 @@ export default function AnalysisPage() {
       {analysisResult && (
         <div className="space-y-6">
           <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold">分析結果預覽</h2>
+            <h2 className="text-xl font-semibold">{t('analysis.title')}</h2>
             <button
               onClick={() => setShowDataTable(!showDataTable)}
               className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 bg-white hover:bg-gray-50"
@@ -621,7 +619,7 @@ export default function AnalysisPage() {
                   <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
                   </svg>
-                  隱藏資料表
+                  {t('scraper.hideTable')}
                 </>
               ) : (
                 <>
@@ -629,7 +627,7 @@ export default function AnalysisPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                   </svg>
-                  查看資料表
+                  {t('scraper.showTable')}
                 </>
               )}
             </button>
@@ -805,7 +803,7 @@ export default function AnalysisPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                   </svg>
                 </div>
-                <h2 className="text-xl font-semibold text-gray-900">數據篩選</h2>
+                <h2 className="text-xl font-semibold text-gray-900">{t('analysis.filter')}</h2>
               </div>
               <button
                 onClick={handleResetFilters}
@@ -814,7 +812,7 @@ export default function AnalysisPage() {
                 <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
-                重置篩選
+                {t('filter.reset')}
               </button>
             </div>
 
@@ -826,7 +824,7 @@ export default function AnalysisPage() {
                     <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    <span>時間範圍</span>
+                    <span>{t('filter.dateRange')}</span>
                   </span>
                 </label>
 
@@ -840,7 +838,7 @@ export default function AnalysisPage() {
                       <span className="text-sm text-gray-700">
                         {filters.dateRange.start && filters.dateRange.end
                           ? `${formatDisplayDate(filters.dateRange.start)} 至 ${formatDisplayDate(filters.dateRange.end)}`
-                          : '選擇日期範圍'}
+                          : t('filter.selectDateRange')}
                       </span>
                       <svg className={`w-5 h-5 text-gray-400 transition-transform ${showDatePicker ? 'rotate-180' : ''}`} 
                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -854,13 +852,12 @@ export default function AnalysisPage() {
                       <div className="p-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                           <div className="space-y-1">
-                            <label className="block text-xs text-gray-500">開始日期</label>
+                            <label className="block text-xs text-gray-500">{t('filter.startDate')}</label>
                             <input
                               type="date"
                               value={filters.dateRange.start}
                               onChange={(e) => {
                                 let value = e.target.value;
-                                // 轉換本地化格式
                                 value = convertLocaleDateToISO(value);
                                 const validatedDate = validateDateInput(value);
                                 if (validatedDate !== value) {
@@ -871,30 +868,16 @@ export default function AnalysisPage() {
                                   dateRange: { ...filters.dateRange, start: validatedDate }
                                 });
                               }}
-                              onInput={(e) => {
-                                const input = e.target as HTMLInputElement;
-                                let value = input.value;
-                                // 轉換本地化格式
-                                value = convertLocaleDateToISO(value);
-                                const validatedDate = validateDateInput(value);
-                                if (validatedDate !== value) {
-                                  input.value = validatedDate;
-                                }
-                              }}
-                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm [&::-webkit-calendar-picker-indicator]:bg-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-datetime-edit]:p-0"
-                              placeholder="YYYY-MM-DD"
-                              max="9999-12-31"
-                              pattern="\d{4}-\d{2}-\d{2}"
+                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                             />
                           </div>
                           <div className="space-y-1">
-                            <label className="block text-xs text-gray-500">結束日期</label>
+                            <label className="block text-xs text-gray-500">{t('filter.endDate')}</label>
                             <input
                               type="date"
                               value={filters.dateRange.end}
                               onChange={(e) => {
                                 let value = e.target.value;
-                                // 轉換本地化格式
                                 value = convertLocaleDateToISO(value);
                                 const validatedDate = validateDateInput(value);
                                 if (validatedDate !== value) {
@@ -905,20 +888,7 @@ export default function AnalysisPage() {
                                   dateRange: { ...filters.dateRange, end: validatedDate }
                                 });
                               }}
-                              onInput={(e) => {
-                                const input = e.target as HTMLInputElement;
-                                let value = input.value;
-                                // 轉換本地化格式
-                                value = convertLocaleDateToISO(value);
-                                const validatedDate = validateDateInput(value);
-                                if (validatedDate !== value) {
-                                  input.value = validatedDate;
-                                }
-                              }}
-                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm [&::-webkit-calendar-picker-indicator]:bg-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-datetime-edit]:p-0"
-                              placeholder="YYYY-MM-DD"
-                              max="9999-12-31"
-                              pattern="\d{4}-\d{2}-\d{2}"
+                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                             />
                           </div>
                         </div>
@@ -928,37 +898,37 @@ export default function AnalysisPage() {
                             onClick={() => handleQuickDateSelect('thisMonth')}
                             className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
                           >
-                            本月
+                            {t('filter.thisMonth')}
                           </button>
                           <button
                             onClick={() => handleQuickDateSelect('lastMonth')}
                             className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
                           >
-                            上個月
+                            {t('filter.lastMonth')}
                           </button>
                           <button
                             onClick={() => handleQuickDateSelect('last7days')}
                             className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
                           >
-                            最近 7 天
+                            {t('filter.last7days')}
                           </button>
                           <button
                             onClick={() => handleQuickDateSelect('last14days')}
                             className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
                           >
-                            最近 14 天
+                            {t('filter.last14days')}
                           </button>
                           <button
                             onClick={() => handleQuickDateSelect('last30days')}
                             className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
                           >
-                            最近 30 天
+                            {t('filter.last30days')}
                           </button>
                           <button
                             onClick={() => handleQuickDateSelect('last3Months')}
                             className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
                           >
-                            最近 3 個月
+                            {t('filter.last3Months')}
                           </button>
                         </div>
                       </div>
@@ -976,7 +946,7 @@ export default function AnalysisPage() {
                       <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                       </svg>
-                      <span>裝置</span>
+                      <span>{t('filter.devices')}</span>
                     </span>
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -1011,7 +981,7 @@ export default function AnalysisPage() {
                       <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.538 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.783.57-1.838-.197-1.538-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                       </svg>
-                      <span>星等</span>
+                      <span>{t('filter.ratings')}</span>
                     </span>
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -1033,7 +1003,7 @@ export default function AnalysisPage() {
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }`}
                       >
-                        {rating} 星
+                        {rating} {t('table.rating')}
                       </button>
                     ))}
                   </div>
@@ -1046,7 +1016,7 @@ export default function AnalysisPage() {
                       <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span>情感</span>
+                      <span>{t('filter.sentiment')}</span>
                     </span>
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -1085,7 +1055,7 @@ export default function AnalysisPage() {
                       <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                       </svg>
-                      <span>分類</span>
+                      <span>{t('filter.categories')}</span>
                     </span>
                   </label>
                   <div className="flex flex-wrap gap-2">
