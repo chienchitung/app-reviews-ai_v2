@@ -52,6 +52,61 @@ const useClickOutside = (ref: React.RefObject<HTMLElement>, handler: () => void)
   }, [ref, handler]);
 };
 
+// 新增日期驗證函數
+const validateDateInput = (dateString: string) => {
+  if (!dateString) return '';
+  
+  let [year, month, day] = dateString.split('-').map(part => part || '');
+  
+  // 限制年份為四位數字
+  if (year && year.length > 4) {
+    year = year.slice(0, 4);
+  }
+
+  // 確保月份在 1-12 之間
+  if (month) {
+    const monthNum = parseInt(month);
+    if (isNaN(monthNum) || monthNum < 1) month = '01';
+    if (monthNum > 12) month = '12';
+  }
+
+  // 根據月份取得該月最大天數
+  const getMaxDaysInMonth = (year: string, month: string) => {
+    const monthNum = parseInt(month);
+    if (!monthNum || isNaN(monthNum)) return 31;
+
+    // 檢查是否為閏年
+    const yearNum = parseInt(year);
+    const isLeapYear = yearNum && !isNaN(yearNum) && 
+      (yearNum % 4 === 0 && (yearNum % 100 !== 0 || yearNum % 400 === 0));
+    
+    // 每月天數對照表
+    const daysInMonth = {
+      1: 31, 2: isLeapYear ? 29 : 28, 3: 31, 4: 30,
+      5: 31, 6: 30, 7: 31, 8: 31,
+      9: 30, 10: 31, 11: 30, 12: 31
+    };
+    
+    return daysInMonth[monthNum as keyof typeof daysInMonth] || 31;
+  };
+
+  // 驗證並修正日期
+  if (day) {
+    const maxDays = getMaxDaysInMonth(year, month);
+    const dayNum = parseInt(day);
+    if (isNaN(dayNum) || dayNum < 1) day = '01';
+    if (dayNum > maxDays) day = maxDays.toString().padStart(2, '0');
+  }
+
+  // 組合日期字串，確保每個部分都有值時才加入
+  const dateParts = [];
+  if (year) dateParts.push(year);
+  if (month) dateParts.push(month.padStart(2, '0'));
+  if (day) dateParts.push(day.padStart(2, '0'));
+  
+  return dateParts.join('-');
+};
+
 export default function AnalysisPage() {
   const [file, setFile] = useState<File | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -127,7 +182,7 @@ export default function AnalysisPage() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || '分析��求失敗');
+        throw new Error(result.error || '分析請求失敗');
       }
 
       if (!result.success || !result.data) {
@@ -411,7 +466,7 @@ export default function AnalysisPage() {
       categories: []
     });
     
-    // 重置所有圖表和數據到初始狀���
+    // 重置所有圖表和數據到初始狀態
     if (originalData) {
       setAnalysisResult({
         ...originalData,
@@ -432,6 +487,13 @@ export default function AnalysisPage() {
     
     // 關閉日期選擇器
     setShowDatePicker(false);
+  };
+
+  // 新增日期格式化函數
+  const formatDisplayDate = (dateString: string) => {
+    if (!dateString) return '';
+    const [year, month, day] = dateString.split('-');
+    return `${year}-${month}-${day}`;
   };
 
   return (
@@ -721,7 +783,7 @@ export default function AnalysisPage() {
             </section>
           )}
 
-          {/* 新增篩選器區塊 - 重新設計���本 */}
+          {/* 新增篩選器區塊 - 重新設計本區塊 */}
           <section className="bg-white rounded-xl p-6 shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-3">
@@ -764,7 +826,7 @@ export default function AnalysisPage() {
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-700">
                         {filters.dateRange.start && filters.dateRange.end
-                          ? `${filters.dateRange.start} 至 ${filters.dateRange.end}`
+                          ? `${formatDisplayDate(filters.dateRange.start)} 至 ${formatDisplayDate(filters.dateRange.end)}`
                           : '選擇日期範圍'}
                       </span>
                       <svg className={`w-5 h-5 text-gray-400 transition-transform ${showDatePicker ? 'rotate-180' : ''}`} 
@@ -783,11 +845,26 @@ export default function AnalysisPage() {
                             <input
                               type="date"
                               value={filters.dateRange.start}
-                              onChange={(e) => handleFilterChange({
-                                ...filters,
-                                dateRange: { ...filters.dateRange, start: e.target.value }
-                              })}
+                              onChange={(e) => {
+                                const validatedDate = validateDateInput(e.target.value);
+                                if (validatedDate !== e.target.value) {
+                                  e.target.value = validatedDate;
+                                }
+                                handleFilterChange({
+                                  ...filters,
+                                  dateRange: { ...filters.dateRange, start: validatedDate }
+                                });
+                              }}
+                              onInput={(e) => {
+                                const input = e.target as HTMLInputElement;
+                                const validatedDate = validateDateInput(input.value);
+                                if (validatedDate !== input.value) {
+                                  input.value = validatedDate;
+                                }
+                              }}
                               className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                              placeholder="YYYY-MM-DD"
+                              max="9999-12-31"
                             />
                           </div>
                           <div className="space-y-1">
@@ -795,11 +872,26 @@ export default function AnalysisPage() {
                             <input
                               type="date"
                               value={filters.dateRange.end}
-                              onChange={(e) => handleFilterChange({
-                                ...filters,
-                                dateRange: { ...filters.dateRange, end: e.target.value }
-                              })}
+                              onChange={(e) => {
+                                const validatedDate = validateDateInput(e.target.value);
+                                if (validatedDate !== e.target.value) {
+                                  e.target.value = validatedDate;
+                                }
+                                handleFilterChange({
+                                  ...filters,
+                                  dateRange: { ...filters.dateRange, end: validatedDate }
+                                });
+                              }}
+                              onInput={(e) => {
+                                const input = e.target as HTMLInputElement;
+                                const validatedDate = validateDateInput(input.value);
+                                if (validatedDate !== input.value) {
+                                  input.value = validatedDate;
+                                }
+                              }}
                               className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                              placeholder="YYYY-MM-DD"
+                              max="9999-12-31"
                             />
                           </div>
                         </div>
