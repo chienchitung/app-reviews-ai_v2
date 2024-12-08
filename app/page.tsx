@@ -166,10 +166,10 @@ export default function HomePage() {
                   <span className="text-lg font-bold">1</span>
                 </div>
                 <h3 className="mt-6 text-lg font-medium text-gray-900">
-                  輸入應用程式連結
+                  輸入應用程式名稱
                 </h3>
                 <p className="mt-2 text-base text-gray-500">
-                  在資料爬取頁面輸入 App Store 或 Google Play 的應用程式連結
+                  在資料爬取頁面輸入應用程式名稱，系統會自動搜尋並顯示 App Store 和 Google Play 的應用程式連結
                 </p>
               </motion.div>
 
