@@ -49,6 +49,16 @@ const translations: Translations = {
     'filter.last30days': '最近 30 天',
     'filter.last3Months': '最近 3 個月',
     
+    // 篩選器選項
+    'filter.rating.1': '1 星',
+    'filter.rating.2': '2 星',
+    'filter.rating.3': '3 星',
+    'filter.rating.4': '4 星',
+    'filter.rating.5': '5 星',
+    'filter.sentiment.positive': '正面',
+    'filter.sentiment.neutral': '中性',
+    'filter.sentiment.negative': '負面',
+    
     // 登入頁面
     'login.backToHome': '返回首頁',
     'login.welcome': '歡迎回來',
@@ -118,6 +128,8 @@ const translations: Translations = {
       '整體情感分布分析'
     ],
     'analysis.generateReport': '4. 分析完成後可生成詳細洞察報告',
+    'analysis.startButton': '開始分析',
+    'analysis.processing': '分析中...',
     
     // 爬蟲頁面
     'scraper.title': '應用程式評論爬取',
@@ -258,7 +270,7 @@ const translations: Translations = {
     'terms.backToSignup': '返回註冊',
     'terms.section1.title': '1. 服務範圍',
     'terms.section1.description': 'AppReviews AI 提供以下服務：',
-    'terms.section1.item1': 'App 評論分析與洞察',
+    'terms.section1.item1': 'App 評分析與洞察',
     'terms.section1.item2': '自動化評論回覆建議',
     'terms.section1.item3': '評論情緒分析',
     'terms.section1.item4': '競品分析報告',
@@ -413,6 +425,14 @@ const translations: Translations = {
     'pagination.previous': '上一頁',
     'pagination.next': '下一頁',
     'pagination.info': '第 {current} 頁，共 {total} 頁',
+    
+    // 日期選擇器
+    'filter.startDate': '開始日期',
+    'filter.endDate': '結束日期',
+    'filter.date.year': '年',
+    'filter.date.month': '月',
+    'filter.date.day': '日',
+    'to': '至',
   },
   en: {
     // Navigation
@@ -443,6 +463,16 @@ const translations: Translations = {
     'filter.last14days': 'Last 14 Days',
     'filter.last30days': 'Last 30 Days',
     'filter.last3Months': 'Last 3 Months',
+    
+    // Filter Options
+    'filter.rating.1': '1 Star',
+    'filter.rating.2': '2 Stars',
+    'filter.rating.3': '3 Stars',
+    'filter.rating.4': '4 Stars',
+    'filter.rating.5': '5 Stars',
+    'filter.sentiment.positive': 'Positive',
+    'filter.sentiment.neutral': 'Neutral',
+    'filter.sentiment.negative': 'Negative',
     
     // Login Page
     'login.backToHome': 'Back to Home',
@@ -513,6 +543,8 @@ const translations: Translations = {
       'Overall Sentiment Distribution Analysis'
     ],
     'analysis.generateReport': '4. Generate detailed insight report after analysis',
+    'analysis.startButton': 'Start Analysis',
+    'analysis.processing': 'Analyzing...',
     
     // Scraper Page
     'scraper.title': 'App Review Scraper',
@@ -808,6 +840,14 @@ const translations: Translations = {
     'pagination.previous': 'Previous',
     'pagination.next': 'Next',
     'pagination.info': 'Page {current} of {total}',
+    
+    // Date Picker
+    'filter.startDate': 'Start Date',
+    'filter.endDate': 'End Date',
+    'filter.date.year': 'Year',
+    'filter.date.month': 'Month',
+    'filter.date.day': 'Day',
+    'to': 'to',
   }
 };
 

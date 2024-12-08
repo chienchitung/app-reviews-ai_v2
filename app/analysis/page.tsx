@@ -33,7 +33,7 @@ interface Filters {
   };
   devices: string[];
   ratings: number[];
-  sentiments: string[];
+  sentiments: string[];  // 這裡存儲 'positive', 'neutral', 'negative'
   categories: string[];
 }
 
@@ -108,10 +108,17 @@ const validateDateInput = (dateString: string) => {
   return dateParts.join('-');
 };
 
-// 新增日期格式化顯示函數
-const formatDisplayDate = (dateString: string) => {
+// 修改日期格式化顯示函數
+const formatDisplayDate = (dateString: string, language: string) => {
   if (!dateString) return '';
-  return dateString; // 保持 YYYY-MM-DD 格式
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  
+  return language === 'zh' 
+    ? `${year}${t('filter.date.year')}${month}${t('filter.date.month')}${day}${t('filter.date.day')}`
+    : `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
 };
 
 // 新增日期本地化格式轉換函數
@@ -129,7 +136,7 @@ const convertLocaleDateToISO = (dateString: string) => {
 };
 
 export default function AnalysisPage() {
-  const { t } = useLanguage();  // 新增這行
+  const { t, language } = useLanguage();  // 確保引入 language
   const [file, setFile] = useState<File | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
@@ -157,7 +164,7 @@ export default function AnalysisPage() {
       if (!file.name.match(/\.(csv|xlsx|xls)$/i)) {
         alert('請上傳 .csv, .xlsx 或 .xls 格式的檔案');
         if (fileInputRef.current) {
-          fileInputRef.current.value = ''; // 清除無效的選擇
+          fileInputRef.current.value = ''; // 清除無效的選���
         }
         return;
       }
@@ -204,7 +211,7 @@ export default function AnalysisPage() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || '分析請求失敗');
+        throw new Error(result.error || '分���請求失敗');
       }
 
       if (!result.success || !result.data) {
@@ -338,7 +345,16 @@ export default function AnalysisPage() {
                          (!newFilters.dateRange.end || date <= new Date(newFilters.dateRange.end));
         const matchDevice = newFilters.devices.length === 0 || newFilters.devices.includes(feedback.device);
         const matchRating = newFilters.ratings.length === 0 || newFilters.ratings.includes(Math.floor(feedback.rating));
-        const matchSentiment = newFilters.sentiments.length === 0 || newFilters.sentiments.includes(feedback.sentiment);
+        
+        // 修改情感比對邏輯
+        const sentimentMap: { [key: string]: string } = {
+          'positive': '正面',
+          'neutral': '中性',
+          'negative': '負面'
+        };
+        const matchSentiment = newFilters.sentiments.length === 0 || 
+                            newFilters.sentiments.some(s => feedback.sentiment === sentimentMap[s]);
+        
         const matchCategory = newFilters.categories.length === 0 || 
                             feedback.category.split(/[,，]/).some(cat => newFilters.categories.includes(cat.trim()));
         
@@ -368,7 +384,7 @@ export default function AnalysisPage() {
 
       // 更新分析結果
       setAnalysisResult({
-        ...originalData,  // 保持原始數據的其��屬性
+        ...originalData,  // 保持原始數據的其他屬性
         feedbacks: filteredData,
         summary,
         keywords
@@ -403,7 +419,7 @@ export default function AnalysisPage() {
 
   // 修改時間範圍的處理函數
   const handleQuickDateSelect = (option: string) => {
-    // 使用台北時區獲取當前日期
+    // 用台北時區獲取當前日期
     const now = new Date();
     const today = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Taipei' }));
     today.setHours(0, 0, 0, 0);
@@ -592,14 +608,14 @@ export default function AnalysisPage() {
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              <span>{t('scraper.processing')}</span>
+              <span>{t('analysis.processing')}</span>
             </>
           ) : (
             <>
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
               </svg>
-              <span>{t('scraper.startScraping')}</span>
+              <span>{t('analysis.startButton')}</span>
             </>
           )}
         </button>
@@ -700,7 +716,7 @@ export default function AnalysisPage() {
                   <div className="flex items-center text-sm text-gray-700">
                     <span>
                       顯示第 {((currentPage - 1) * itemsPerPage) + 1} 到 {Math.min(currentPage * itemsPerPage, analysisResult.feedbacks.length)} 筆，
-                      共 {analysisResult.feedbacks.length} 筆資
+                      共 {analysisResult.feedbacks.length} 筆資料
                     </span>
                   </div>
                   
@@ -837,7 +853,7 @@ export default function AnalysisPage() {
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-700">
                         {filters.dateRange.start && filters.dateRange.end
-                          ? `${formatDisplayDate(filters.dateRange.start)} 至 ${formatDisplayDate(filters.dateRange.end)}`
+                          ? `${formatDisplayDate(filters.dateRange.start, language)} ${t('to')} ${formatDisplayDate(filters.dateRange.end, language)}`
                           : t('filter.selectDateRange')}
                       </span>
                       <svg className={`w-5 h-5 text-gray-400 transition-transform ${showDatePicker ? 'rotate-180' : ''}`} 
@@ -869,6 +885,7 @@ export default function AnalysisPage() {
                                 });
                               }}
                               className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                              placeholder={`${t('filter.date.year')}/${t('filter.date.month')}/${t('filter.date.day')}`}
                             />
                           </div>
                           <div className="space-y-1">
@@ -889,6 +906,7 @@ export default function AnalysisPage() {
                                 });
                               }}
                               className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                              placeholder={`${t('filter.date.year')}/${t('filter.date.month')}/${t('filter.date.day')}`}
                             />
                           </div>
                         </div>
@@ -1003,7 +1021,7 @@ export default function AnalysisPage() {
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }`}
                       >
-                        {rating} {t('table.rating')}
+                        {t(`filter.rating.${rating}`)}
                       </button>
                     ))}
                   </div>
@@ -1021,28 +1039,28 @@ export default function AnalysisPage() {
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {[
-                      { value: '正面', bgColor: 'bg-green-600', hoverColor: 'hover:bg-green-700', lightBg: 'bg-green-100' },
-                      { value: '中性', bgColor: 'bg-gray-600', hoverColor: 'hover:bg-gray-700', lightBg: 'bg-gray-100' },
-                      { value: '負面', bgColor: 'bg-red-600', hoverColor: 'hover:bg-red-700', lightBg: 'bg-red-100' }
-                    ].map(({ value, bgColor, hoverColor, lightBg }) => (
+                      { key: 'positive', bgColor: 'bg-green-600', hoverColor: 'hover:bg-green-700', lightBg: 'bg-green-100' },
+                      { key: 'neutral', bgColor: 'bg-gray-600', hoverColor: 'hover:bg-gray-700', lightBg: 'bg-gray-100' },
+                      { key: 'negative', bgColor: 'bg-red-600', hoverColor: 'hover:bg-red-700', lightBg: 'bg-red-100' }
+                    ].map(({ key, bgColor, hoverColor, lightBg }) => (
                       <button
-                        key={value}
+                        key={key}
                         onClick={() => {
-                          const newSentiments = filters.sentiments.includes(value)
-                            ? filters.sentiments.filter(s => s !== value)
-                            : [...filters.sentiments, value];
+                          const newSentiments = filters.sentiments.includes(key)
+                            ? filters.sentiments.filter(s => s !== key)
+                            : [...filters.sentiments, key];
                           handleFilterChange({
                             ...filters,
                             sentiments: newSentiments
                           });
                         }}
                         className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                          filters.sentiments.includes(value)
+                          filters.sentiments.includes(key)
                             ? `${bgColor} text-white ${hoverColor}`
                             : `${lightBg} text-gray-700 hover:bg-gray-200`
                         }`}
                       >
-                        {value}
+                        {t(`filter.sentiment.${key}`)}
                       </button>
                     ))}
                   </div>
@@ -1089,7 +1107,7 @@ export default function AnalysisPage() {
             <div className="mt-6 flex flex-wrap gap-2">
               {filters.devices.map(device => (
                 <span key={device} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
-                  <span>裝置: {device}</span>
+                  <span>{t('filter.devices')}: {device}</span>
                   <button
                     onClick={() => handleFilterChange({
                       ...filters,
@@ -1103,7 +1121,7 @@ export default function AnalysisPage() {
               ))}
               {filters.ratings.map(rating => (
                 <span key={rating} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800">
-                  <span>{rating} 星</span>
+                  <span>{t(`filter.rating.${rating}`)}</span>
                   <button
                     onClick={() => handleFilterChange({
                       ...filters,
@@ -1117,7 +1135,7 @@ export default function AnalysisPage() {
               ))}
               {filters.sentiments.map(sentiment => (
                 <span key={sentiment} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
-                  <span>情感: {sentiment}</span>
+                  <span>{t('filter.sentiment')}: {t(`filter.sentiment.${sentiment}`)}</span>
                   <button
                     onClick={() => handleFilterChange({
                       ...filters,
@@ -1131,7 +1149,7 @@ export default function AnalysisPage() {
               ))}
               {filters.categories.map(category => (
                 <span key={category} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-purple-100 text-purple-800">
-                  <span>分類: {category}</span>
+                  <span>{t('filter.categories')}: {category}</span>
                   <button
                     onClick={() => handleFilterChange({
                       ...filters,
