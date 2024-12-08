@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Check } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 // 將 Plan 介面導出
 export interface Plan {
@@ -16,6 +17,7 @@ export interface Plan {
 
 export function PricingCard({ plan }: { plan: Plan }) {
   const router = useRouter();
+  const { t } = useLanguage();
 
   const handleClick = () => {
     switch (plan.type) {
@@ -31,6 +33,17 @@ export function PricingCard({ plan }: { plan: Plan }) {
     }
   };
 
+  const getButtonText = () => {
+    switch (plan.type) {
+      case 'free':
+        return t('pricing.card.button.free');
+      case 'pro':
+        return t('pricing.card.button.pro');
+      case 'enterprise':
+        return t('pricing.card.button.enterprise');
+    }
+  };
+
   return (
     <div
       className={`rounded-lg shadow-lg overflow-hidden bg-white relative
@@ -38,7 +51,7 @@ export function PricingCard({ plan }: { plan: Plan }) {
     >
       {plan.popular && (
         <div className="absolute top-0 right-0 bg-blue-500 text-white px-4 py-1 rounded-bl-lg">
-          熱門方案
+          {t('pricing.card.popular')}
         </div>
       )}
       <div className="px-6 py-8">
@@ -48,20 +61,22 @@ export function PricingCard({ plan }: { plan: Plan }) {
           <span className="text-4xl font-extrabold text-gray-900">
             {plan.price}
           </span>
-          {plan.type !== 'enterprise' && <span className="text-base font-medium text-gray-500">/月</span>}
+          {plan.type !== 'enterprise' && (
+            <span className="text-base font-medium text-gray-500">
+              {t('pricing.card.perMonth')}
+            </span>
+          )}
         </p>
         <button
           onClick={handleClick}
           className="mt-8 block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-150"
         >
-          {plan.type === 'free' ? '立即開始' : 
-           plan.type === 'enterprise' ? '聯繫我們' : 
-           '選擇方案'}
+          {getButtonText()}
         </button>
       </div>
       <div className="px-6 pt-6 pb-8 bg-gray-50">
         <h4 className="text-sm font-bold text-gray-900 tracking-wide uppercase">
-          包含功能
+          {t('pricing.card.features')}
         </h4>
         <ul className="mt-6 space-y-4">
           {plan.features.map((feature) => (

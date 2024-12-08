@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
-import { ChevronUp, ChevronDown } from 'lucide-react';
+import { ChevronUp, ChevronDown, Globe } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const LogoSVG = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
@@ -17,10 +18,10 @@ const LogoSVG = () => (
 );
 
 const productCategories = [
-  { title: '評論分析', link: '/analysis' },
-  { title: '資料爬取', link: '/scraper' },
-  { title: '定價方案', link: '/pricing' },
-  { title: '學習中心', link: '/learn' },
+  { title: 'nav.features.reviewAnalysis', link: '/analysis' },
+  { title: 'nav.features.dataScraping', link: '/scraper' },
+  { title: 'nav.pricing', link: '/pricing' },
+  { title: 'nav.learningCenter', link: '/learn' },
 ];
 
 interface NavbarProps {
@@ -37,6 +38,7 @@ export default function Navbar({}: NavbarProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { language, setLanguage, t } = useLanguage();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEventType) {
@@ -69,7 +71,7 @@ export default function Navbar({}: NavbarProps) {
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between p-4 border-b">
-            <span className="text-lg font-semibold">功能選單</span>
+            <span className="text-lg font-semibold">{t('nav.menu')}</span>
             <button 
               onClick={() => setMenuOpen(false)} 
               className="p-2 hover:bg-gray-100 rounded-full"
@@ -104,7 +106,7 @@ export default function Navbar({}: NavbarProps) {
                     }`}
                     onClick={() => setMenuOpen(false)}
                   >
-                    {category.title}
+                    {t(category.title)}
                   </Link>
                 </li>
               ))}
@@ -115,7 +117,7 @@ export default function Navbar({}: NavbarProps) {
                   className="flex items-center py-3 px-4 text-lg text-gray-700 hover:bg-gray-100 rounded-md font-medium"
                   onClick={() => setMenuOpen(false)}
                 >
-                  登入
+                  {t('nav.login')}
                 </Link>
               </li>
               <li>
@@ -124,7 +126,7 @@ export default function Navbar({}: NavbarProps) {
                   className="flex items-center py-3 px-4 text-lg text-white bg-[#0066FF] hover:bg-[#0052CC] rounded-md font-medium"
                   onClick={() => setMenuOpen(false)}
                 >
-                  免費開始
+                  {t('nav.startFree')}
                 </Link>
               </li>
             </ul>
@@ -153,7 +155,7 @@ export default function Navbar({}: NavbarProps) {
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                   onMouseEnter={() => setDropdownOpen(true)}
                 >
-                  功能
+                  {t('nav.features')}
                   {dropdownOpen ? (
                     <ChevronUp className="ml-1 h-4 w-4" />
                   ) : (
@@ -169,15 +171,15 @@ export default function Navbar({}: NavbarProps) {
                       href="/analysis"
                       className="block px-4 py-2 text-sm font-bold text-gray-700 hover:bg-gray-100"
                     >
-                      評論分析
-                      <p className="text-xs text-gray-500">深入分析用戶評論數據</p>
+                      {t('features.reviewAnalysis')}
+                      <p className="text-xs text-gray-500">{t('features.reviewAnalysis.desc')}</p>
                     </Link>
                     <Link
                       href="/scraper"
                       className="block px-4 py-2 text-sm font-bold text-gray-700 hover:bg-gray-100"
                     >
-                      資料爬取
-                      <p className="text-xs text-gray-500">自動化爬取應用商店評論</p>
+                      {t('features.dataScraping')}
+                      <p className="text-xs text-gray-500">{t('features.dataScraping.desc')}</p>
                     </Link>
                   </div>
                 )}
@@ -187,23 +189,31 @@ export default function Navbar({}: NavbarProps) {
                 href="/pricing" 
                 className="hidden md:block px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
               >
-                定價
+                {t('nav.pricing')}
               </Link>
               <Link 
                 href="/learn" 
                 className="hidden md:block px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
               >
-                學習中心
+                {t('nav.learningCenter')}
               </Link>
             </div>
 
             <div className="flex items-center space-x-4">
               <div className="hidden md:flex items-center space-x-4">
+                {/* 語言切換按鈕 */}
+                <button
+                  onClick={() => setLanguage(language === 'zh' ? 'en' : 'zh')}
+                  className="flex items-center space-x-1 text-gray-700 hover:text-gray-900"
+                >
+                  <Globe className="h-4 w-4" />
+                  <span className="text-sm font-medium">{language.toUpperCase()}</span>
+                </button>
                 <Link 
                   href="/login" 
                   className="text-gray-700 hover:text-gray-900 text-sm font-medium"
                 >
-                  登入
+                  {t('nav.login')}
                 </Link>
                 <Link 
                   href="/scraper"
@@ -212,7 +222,7 @@ export default function Navbar({}: NavbarProps) {
                     text-white text-sm font-medium
                     transition-colors duration-200"
                 >
-                  免費開始
+                  {t('nav.startFree')}
                 </Link>
               </div>
 
