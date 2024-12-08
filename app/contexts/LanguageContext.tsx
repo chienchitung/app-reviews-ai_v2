@@ -119,19 +119,25 @@ const translations: Translations = {
     'analysis.generateReport': '分析完成後可生成詳細洞察報告',
     
     // 爬蟲頁面
-    'scraper.title': '資料爬取',
-    'scraper.inputAppName': '輸入應用程式名稱',
-    'scraper.searchPlaceholder': '請輸入應用程式名稱...',
-    'scraper.searching': '搜尋中...',
-    'scraper.noResults': '找不到相關應用程式',
-    'scraper.appStoreLink': 'App Store 連結',
-    'scraper.playStoreLink': 'Google Play 連結',
+    'scraper.title': '應用程式評論爬取',
+    'scraper.inputAppName': '搜尋應用程式',
+    'scraper.searchResults': '應用程式名稱',
+    'scraper.noResults': '未找到相關應用程式',
+    'scraper.confirmApp': '請確認這是您要爬取評論的應用程式',
+    'scraper.appStoreLink': 'Apple Store URL',
+    'scraper.playStoreLink': 'Google Play Store URL',
+    'scraper.appStorePlaceholder': '輸入 Apple Store 應用程式網址',
+    'scraper.playStorePlaceholder': '輸入 Google Play Store 應用程式網址',
     'scraper.startScraping': '開始爬取',
-    'scraper.processing': '處理中...',
+    'scraper.processing': '正在爬取',
+    'scraper.reviewData': '評論資料',
+    'scraper.reviewCount': '筆',
+    'scraper.hideTable': '隱藏資料表',
+    'scraper.showTable': '展開資料表',
     
     // 頁尾
     'footer.about': '關於平台',
-    'footer.aboutDesc': 'AppReviews AI提供完整的評論爬取和分析服��，幫助開發者更好地理解用戶需求和反饋。',
+    'footer.aboutDesc': 'AppReviews AI提供完整的評論爬取和分析服務，幫助開發者更好地理解用戶需求和反饋。',
     'footer.quickLinks': '快速連結',
     'footer.contact': '聯絡我們',
     'footer.email': 'Email: support@appreviewsai.com',
@@ -252,7 +258,7 @@ const translations: Translations = {
     'terms.section1.title': '1. 服務範圍',
     'terms.section1.description': 'AppReviews AI 提供以下服務：',
     'terms.section1.item1': 'App 評論分析與洞察',
-    'terms.section1.item2': '自動化評論回��建議',
+    'terms.section1.item2': '自動化評論回覆建議',
     'terms.section1.item3': '評論情緒分析',
     'terms.section1.item4': '競品分析報告',
 
@@ -299,7 +305,7 @@ const translations: Translations = {
     'privacy.section1.item1': '基本資料（姓名、電子郵件）',
     'privacy.section1.item2': '使用數據（登入時間、功能使用記錄）',
     'privacy.section1.item3': '裝置資訊（IP 位址、瀏覽器類型）',
-    'privacy.section1.item4': '��款資訊（信用卡後四碼、交易記錄）',
+    'privacy.section1.item4': '付款資訊（信用卡後四碼、交易記錄）',
 
     'privacy.section2.title': '2. 資料使用',
     'privacy.section2.description': '我們使用收集的資料用於：',
@@ -325,7 +331,7 @@ const translations: Translations = {
     'privacy.section5.title': '5. 第三方服務',
     'privacy.section5.description': '我們可能使用第三方服務來：',
     'privacy.section5.item1': '處理付款',
-    'privacy.section5.item2': '分析��用數據',
+    'privacy.section5.item2': '分析用數據',
     'privacy.section5.item3': '提供客戶支援',
     'privacy.section5.item4': '發送電子郵件通知',
 
@@ -354,7 +360,7 @@ const translations: Translations = {
     // 付款成功頁面
     'payment.success.title': '付款成功！',
     'payment.success.subtitle': '感謝您訂閱我們的專業版服務',
-    'payment.success.description': '您現在可以使用所有進階功���',
+    'payment.success.description': '您現在可以使用所有進階功能',
     'payment.success.emailNotice': '訂閱確認信已發送至您的信箱',
     'payment.success.button': '返回首頁開始使用',
     
@@ -376,7 +382,7 @@ const translations: Translations = {
     'enterprise.error.submitFailed': '提交失敗，請稍後再試',
     'enterprise.features.title': '企業方案特色',
     'enterprise.features.support.title': '專屬客戶經理',
-    'enterprise.features.support.description': '一對一專屬服務，快速回應您的需求',
+    'enterprise.features.support.description': '一對一專��服務，快速回應您的需求',
     'enterprise.features.customization.title': '客製化解決方案',
     'enterprise.features.customization.description': '根據您的業務需求打造專屬分析模型',
     'enterprise.features.technical.title': '24/7 技術支援',
@@ -392,6 +398,20 @@ const translations: Translations = {
     'enterprise.success.process.step3': '3. 提供客製化報價與解決方案',
     'enterprise.success.urgent': '如有緊急需求，歡迎直接聯繫：',
     'enterprise.success.button': '返回首頁',
+
+    // 資料表格相關
+    'table.date': '日期',
+    'table.username': '用戶名稱',
+    'table.review': '評論內容',
+    'table.rating': '評分',
+    'table.platform': '平台',
+    'table.developerResponse': '開發者回覆',
+    'table.language': '語言',
+    
+    // 分頁相關
+    'pagination.previous': '上一頁',
+    'pagination.next': '下一頁',
+    'pagination.info': '第 {current} 頁，共 {total} 頁',
   },
   en: {
     // Navigation
@@ -493,15 +513,21 @@ const translations: Translations = {
     'analysis.generateReport': 'Generate detailed insight report after analysis',
     
     // Scraper Page
-    'scraper.title': 'Data Scraping',
-    'scraper.inputAppName': 'Enter App Name',
-    'scraper.searchPlaceholder': 'Enter app name...',
-    'scraper.searching': 'Searching...',
-    'scraper.noResults': 'No apps found',
-    'scraper.appStoreLink': 'App Store Link',
-    'scraper.playStoreLink': 'Google Play Link',
+    'scraper.title': 'App Review Scraper',
+    'scraper.inputAppName': 'Search for app',
+    'scraper.searchResults': 'App Name',
+    'scraper.noResults': 'No app found',
+    'scraper.confirmApp': 'Please confirm this is the app you want to scrape reviews from',
+    'scraper.appStoreLink': 'Apple Store URL',
+    'scraper.playStoreLink': 'Google Play Store URL',
+    'scraper.appStorePlaceholder': 'Enter Apple Store app URL',
+    'scraper.playStorePlaceholder': 'Enter Google Play Store app URL',
     'scraper.startScraping': 'Start Scraping',
-    'scraper.processing': 'Processing...',
+    'scraper.processing': 'Processing',
+    'scraper.reviewData': 'Review Data',
+    'scraper.reviewCount': 'items',
+    'scraper.hideTable': 'Hide Table',
+    'scraper.showTable': 'Show Table',
     
     // Footer
     'footer.about': 'About Platform',
@@ -766,6 +792,20 @@ const translations: Translations = {
     'enterprise.success.process.step3': '3. Provide customized quotation and solutions',
     'enterprise.success.urgent': 'For urgent inquiries, please contact us directly:',
     'enterprise.success.button': 'Back to Home',
+
+    // 資料表格相關
+    'table.date': 'Date',
+    'table.username': 'Username',
+    'table.review': 'Review',
+    'table.rating': 'Rating',
+    'table.platform': 'Platform',
+    'table.developerResponse': 'Developer Response',
+    'table.language': 'Language',
+    
+    // 分頁相關
+    'pagination.previous': 'Previous',
+    'pagination.next': 'Next',
+    'pagination.info': 'Page {current} of {total}',
   }
 };
 

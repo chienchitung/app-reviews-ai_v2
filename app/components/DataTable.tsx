@@ -1,11 +1,15 @@
+'use client';
+
 import { useState } from 'react';
 import type { Review } from '@/types/feedback';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface DataTableProps {
   data: Review[];
 }
 
 export default function DataTable({ data }: DataTableProps) {
+  const { t } = useLanguage();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
   
@@ -23,13 +27,13 @@ export default function DataTable({ data }: DataTableProps) {
         <table className="min-w-full bg-white border table-fixed">
           <thead className="bg-gray-50">
             <tr>
-              <th className="w-[10%] px-4 py-2 text-sm text-gray-500 border">日期</th>
-              <th className="w-[10%] px-4 py-2 text-sm text-gray-500 border">用戶名</th>
-              <th className="w-[35%] px-4 py-2 text-sm text-gray-500 border">評論內容</th>
-              <th className="w-[5%] px-4 py-2 text-sm text-gray-500 border">評分</th>
-              <th className="w-[8%] px-4 py-2 text-sm text-gray-500 border">平台</th>
-              <th className="w-[25%] px-4 py-2 text-sm text-gray-500 border">開發者回覆</th>
-              <th className="w-[7%] px-4 py-2 text-sm text-gray-500 border">語言</th>
+              <th className="w-[10%] px-4 py-2 text-sm text-gray-500 border">{t('table.date') as string}</th>
+              <th className="w-[10%] px-4 py-2 text-sm text-gray-500 border">{t('table.username') as string}</th>
+              <th className="w-[35%] px-4 py-2 text-sm text-gray-500 border">{t('table.review') as string}</th>
+              <th className="w-[5%] px-4 py-2 text-sm text-gray-500 border">{t('table.rating') as string}</th>
+              <th className="w-[8%] px-4 py-2 text-sm text-gray-500 border">{t('table.platform') as string}</th>
+              <th className="w-[25%] px-4 py-2 text-sm text-gray-500 border">{t('table.developerResponse') as string}</th>
+              <th className="w-[7%] px-4 py-2 text-sm text-gray-500 border">{t('table.language') as string}</th>
             </tr>
           </thead>
           <tbody>
@@ -72,17 +76,20 @@ export default function DataTable({ data }: DataTableProps) {
           disabled={currentPage === 1}
           className="px-4 py-2 text-sm bg-gray-100 rounded-md disabled:opacity-50"
         >
-          上一頁
+          {t('pagination.previous') as string}
         </button>
         <span className="text-sm text-gray-600">
-          第 {currentPage} 頁，共 {totalPages} 頁
+          {t('pagination.info', { 
+            current: currentPage.toString(), 
+            total: totalPages.toString() 
+          }) as string}
         </span>
         <button
           onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
           className="px-4 py-2 text-sm bg-gray-100 rounded-md disabled:opacity-50"
         >
-          下一頁
+          {t('pagination.next') as string}
         </button>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import DataTable from './DataTable';
 import type { Review } from '@/types/feedback';
 import * as XLSX from 'xlsx';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface StoreUrls {
   appleStore: string;
@@ -11,6 +12,7 @@ interface StoreUrls {
 }
 
 export default function DataScraper() {
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -172,7 +174,7 @@ export default function DataScraper() {
           <div className="relative flex-1">
             <input
               type="text"
-              placeholder="搜尋應用程式"
+              placeholder={t('scraper.inputAppName') as string}
               value={searchTerm}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -197,7 +199,7 @@ export default function DataScraper() {
           <button
             onClick={handleClear}
             className="px-4 py-2.5 text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
-            title="清除搜尋"
+            title={t('button.clear') as string}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -211,7 +213,7 @@ export default function DataScraper() {
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-700 font-medium">
-                  應用程式名稱：{searchResults.appleApp || '未找到相關應用程式'}
+                  {t('scraper.searchResults') as string}: {searchResults.appleApp || t('scraper.noResults') as string}
                 </span>
               </div>
               {searchResults.appleApp && (
@@ -220,7 +222,7 @@ export default function DataScraper() {
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                     </svg>
-                    請確認這是您要爬取評論的應用程式
+                    {t('scraper.confirmApp') as string}
                   </span>
                 </div>
               )}
@@ -235,28 +237,28 @@ export default function DataScraper() {
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-600">
-                Apple Store URL
+                {t('scraper.appStoreLink') as string}
               </label>
               <input
                 type="text"
                 name="appleStore"
                 value={storeUrls.appleStore}
                 onChange={handleUrlChange}
-                placeholder="輸入 Apple Store 應用程式網址"
+                placeholder={t('scraper.appStorePlaceholder') as string}
                 className="w-full px-4 py-2.5 bg-gray-100 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
               />
             </div>
 
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-600">
-                Google Play Store URL
+                {t('scraper.playStoreLink') as string}
               </label>
               <input
                 type="text"
                 name="googlePlay"
                 value={storeUrls.googlePlay}
                 onChange={handleUrlChange}
-                placeholder="輸入 Google Play Store 應用程式網址"
+                placeholder={t('scraper.playStorePlaceholder') as string}
                 className="w-full px-4 py-2.5 bg-gray-100 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
               />
             </div>
@@ -274,14 +276,14 @@ export default function DataScraper() {
               {isLoading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  正在爬取
+                  {t('scraper.processing') as string}
                 </>
               ) : (
                 <>
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
                   </svg>
-                  開始爬取
+                  {t('scraper.startScraping') as string}
                 </>
               )}
             </button>
@@ -304,7 +306,7 @@ export default function DataScraper() {
           <div className="mt-8 space-y-4">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-medium text-gray-900">
-                評論資料 ({reviews.length} 筆)
+                {t('scraper.reviewData') as string} ({reviews.length} {t('scraper.reviewCount') as string})
               </h2>
               <button
                 onClick={() => setShowTable(!showTable)}
@@ -319,7 +321,7 @@ export default function DataScraper() {
                     <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
                   )}
                 </svg>
-                {showTable ? '隱藏資料表' : '展開資料表'}
+                {showTable ? t('scraper.hideTable') as string : t('scraper.showTable') as string}
               </button>
             </div>
 
@@ -340,7 +342,7 @@ export default function DataScraper() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
                 </svg>
-                下載 Excel
+                {t('button.download') as string} Excel
               </button>
             </div>
           </div>
