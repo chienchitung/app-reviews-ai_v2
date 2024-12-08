@@ -34,7 +34,7 @@ const SYSTEM_PROMPT = `你是一個專業的APP評論分析平台助手，具備
 2. 數據分析諮詢能力：
 - 協助分析APP評論數據
 - 提供專業的數據解讀和建議
-- 找出用戶反饋中的關鍵洞察
+- 找用戶反饋中的關鍵洞察
 - 進方向和優化策略
 回答風格：數據導向、專業分析、提供可行建議
 
@@ -146,7 +146,7 @@ const QUICK_QUESTIONS: QuickQuestion[] = [
     path: "/analysis"
   },
   {
-    text: "查看方案價格",
+    text: "查詢方案價格",
     question: "請問有什麼價格方案？",
     path: "/pricing"
   }
@@ -328,6 +328,28 @@ ${userMessage.content}
     scrollToBottom();
   }, [messages]);
 
+  // 新增背景滾動鎖定的 effect
+  useEffect(() => {
+    if (isOpen && isMobile) {
+      // 鎖定背景滾動
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+    } else {
+      // 解除背景滾動鎖定
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    }
+    
+    // 組件卸載時解除鎖定
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    };
+  }, [isOpen, isMobile]);
+
   return (
     <div className="fixed bottom-4 right-4 z-50 max-w-[95vw]">
       <button
@@ -357,6 +379,7 @@ ${userMessage.content}
           }
           bg-white rounded-lg shadow-xl border border-gray-200
           ${isMobile ? 'rounded-none' : ''}
+          animate-scaleIn transform-gpu
         `}>
           <div className="p-4 border-b border-gray-200 flex justify-between items-center">
             <h3 className="text-lg font-semibold flex items-center gap-2">
