@@ -90,7 +90,7 @@ export default function RootLayout({
                   <h3 className="text-white text-lg font-semibold mb-4">聯絡我們</h3>
                   <ul className="space-y-2">
                     <li className="text-gray-400 text-sm">
-                      Email: contact@appreviewsai.com
+                      Email: support@appreviewsai.com
                     </li>
                     <li className="text-gray-400 text-sm">
                       電話: (02) 1234-5678

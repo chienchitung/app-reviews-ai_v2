@@ -206,7 +206,7 @@ export default function Navbar({}: NavbarProps) {
                   登入
                 </Link>
                 <Link 
-                  href="/analysis"
+                  href="/scraper"
                   className="inline-flex items-center px-4 py-2 rounded-lg
                     bg-[#0066FF] hover:bg-[#0052CC]
                     text-white text-sm font-medium

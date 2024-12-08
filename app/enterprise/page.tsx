@@ -139,7 +139,7 @@ export default function EnterprisePage() {
                 <Mail className="h-6 w-6 text-blue-500 mt-1" />
                 <div>
                   <h4 className="font-semibold">聯絡方式</h4>
-                  <p className="text-gray-600">enterprise@appreviews.ai</p>
+                  <p className="text-gray-600">support@appreviews.ai</p>
                   <p className="text-gray-600">+886 2 1234 5678</p>
                 </div>
               </div>

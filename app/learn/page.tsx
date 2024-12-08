@@ -158,7 +158,7 @@ export default function LearnCenter() {
                 </div>
                 <ul className="list-disc list-outside ml-5 space-y-3 text-gray-600 text-sm sm:text-base">
                   <li className="leading-relaxed">在儀表板查看爬取進度</li>
-                  <li className="leading-relaxed">下載評論數據（CSV格式）</li>
+                  <li className="leading-relaxed">下載評論數據（Excel格式）</li>
                 </ul>
               </div>
             )}
