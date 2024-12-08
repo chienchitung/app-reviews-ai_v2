@@ -169,7 +169,7 @@ export default function HomePage() {
                   輸入應用程式名稱
                 </h3>
                 <p className="mt-2 text-base text-gray-500">
-                  在資料爬取頁面輸入應用程式名稱，系統會自動搜尋並顯示 App Store 和 Google Play 的應用程式連結
+                  輸入應用程式名稱，系統將自動搜尋並顯示 App Store 和 Google Play 的連結
                 </p>
               </motion.div>
 
