@@ -257,7 +257,7 @@ export default function AnalysisPage() {
     }
   };
 
-  // 添加新的 state 來��儲 AI 分析結果
+  // 添加新的 state 來儲存 AI 分析結果
   const [aiAnalysis, setAiAnalysis] = useState<string>('');
   const [isGeneratingInsights, setIsGeneratingInsights] = useState(false);
 
@@ -625,7 +625,7 @@ export default function AnalysisPage() {
       {analysisResult && (
         <div className="space-y-6">
           <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold">{t('analysis.title')}</h2>
+            <h2 className="text-xl font-semibold">{t('analysis.preview')}</h2>
             <button
               onClick={() => setShowDataTable(!showDataTable)}
               className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 bg-white hover:bg-gray-50"
@@ -655,13 +655,13 @@ export default function AnalysisPage() {
                 <table className="w-full">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 w-32">日期</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">評論內容</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 w-24">評分</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 w-32">裝置</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 w-32">分類</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 w-32">情感</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 w-48">關鍵詞</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 w-32">{t('table.date')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">{t('table.review')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 w-24">{t('table.rating')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 w-32">{t('table.device')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 w-32">{t('table.category')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 w-32">{t('table.sentiment')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 w-48">{t('table.keywords')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
@@ -715,8 +715,7 @@ export default function AnalysisPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center text-sm text-gray-700">
                     <span>
-                      顯示第 {((currentPage - 1) * itemsPerPage) + 1} 到 {Math.min(currentPage * itemsPerPage, analysisResult.feedbacks.length)} 筆，
-                      共 {analysisResult.feedbacks.length} 筆資料
+                      {t('pagination.showing')} {((currentPage - 1) * itemsPerPage) + 1} {t('pagination.to')} {Math.min(currentPage * itemsPerPage, analysisResult.feedbacks.length)} {t('pagination.of')} {analysisResult.feedbacks.length} {t('pagination.entries')}
                     </span>
                   </div>
                   
@@ -739,7 +738,7 @@ export default function AnalysisPage() {
                           d="M15 19l-7-7 7-7" 
                         />
                       </svg>
-                      上一頁
+                      {t('pagination.previous')}
                     </button>
                     
                     {/* 頁碼顯示 */}
@@ -789,7 +788,7 @@ export default function AnalysisPage() {
                       disabled={currentPage === totalPages}
                       className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      下一頁
+                      {t('pagination.next')}
                       <svg 
                         className="h-5 w-5 ml-1" 
                         fill="none" 

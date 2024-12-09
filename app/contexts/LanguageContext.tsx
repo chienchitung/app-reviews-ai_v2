@@ -113,6 +113,7 @@ const translations: Translations = {
     
     // 分析頁面
     'analysis.title': '使用說明',
+    'analysis.preview': '分析結果預覽',
     'analysis.viewTable': '查看資料表',
     'analysis.filter': '數據篩選',
     'analysis.resetFilter': '重置篩選',
@@ -260,7 +261,7 @@ const translations: Translations = {
       '在儀表板查看爬取進度',
       '下載評論數據（Excel格式）'
     ],
-    'learn.images.analysis.dashboard': '評論分析儀',
+    'learn.images.analysis.dashboard': '評論分析儀表板',
     'learn.images.analysis.results': '分析結果展示',
     'learn.images.scraper.setup': '爬取任務設定',
     'learn.images.scraper.results': '爬取結果管理',
@@ -420,8 +421,16 @@ const translations: Translations = {
     'table.platform': '平台',
     'table.developerResponse': '開發者回覆',
     'table.language': '語言',
+    'table.device': '裝置',
+    'table.category': '分類',
+    'table.sentiment': '情感',
+    'table.keywords': '關鍵詞',
     
     // 分頁相關
+    'pagination.showing': '顯示第',
+    'pagination.to': '到',
+    'pagination.of': '筆，共',
+    'pagination.entries': '筆資料',
     'pagination.previous': '上一頁',
     'pagination.next': '下一頁',
     'pagination.info': '第 {current} 頁，共 {total} 頁',
@@ -528,6 +537,7 @@ const translations: Translations = {
     
     // Analysis Page
     'analysis.title': 'Instructions',
+    'analysis.preview': 'Analysis Results Preview',
     'analysis.viewTable': 'View Data Table',
     'analysis.filter': 'Data Filter',
     'analysis.resetFilter': 'Reset Filters',
@@ -827,7 +837,7 @@ const translations: Translations = {
     'enterprise.success.urgent': 'For urgent inquiries, please contact us directly:',
     'enterprise.success.button': 'Back to Home',
 
-    // 資料表格相關
+    // Table
     'table.date': 'Date',
     'table.username': 'Username',
     'table.review': 'Review',
@@ -835,8 +845,16 @@ const translations: Translations = {
     'table.platform': 'Platform',
     'table.developerResponse': 'Developer Response',
     'table.language': 'Language',
+    'table.device': 'Device',
+    'table.category': 'Category',
+    'table.sentiment': 'Sentiment',
+    'table.keywords': 'Keywords',
     
-    // 分頁相關
+    // Pagination
+    'pagination.showing': 'Showing',
+    'pagination.to': 'to',
+    'pagination.of': 'of',
+    'pagination.entries': 'entries',
     'pagination.previous': 'Previous',
     'pagination.next': 'Next',
     'pagination.info': 'Page {current} of {total}',
