@@ -1167,10 +1167,10 @@ export default function AnalysisPage() {
           <section id="analysis-report" className="grid grid-cols-1 gap-6">
             {/* 分析摘要 */}
             <div id="analysis-summary" className="bg-white rounded-xl p-6 shadow-sm">
-              <h2 className="text-xl font-semibold mb-4 text-gray-900">分析摘要</h2>
+              <h2 className="text-xl font-semibold mb-4 text-gray-900">{t('analysis.summary.title')}</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                 <div className="bg-blue-50 rounded-lg p-4">
-                  <p className="text-sm text-gray-600 mb-1">篩選後評論數</p>
+                  <p className="text-sm text-gray-600 mb-1">{t('analysis.summary.totalReviews')}</p>
                   <p className="text-2xl font-semibold text-gray-900">
                     {analysisResult.summary.totalCount.toLocaleString()}
                   </p>
@@ -1181,25 +1181,25 @@ export default function AnalysisPage() {
                   )}
                 </div>
                 <div className="bg-blue-50 rounded-lg p-4">
-                  <p className="text-sm text-gray-600 mb-1">正面評價比例</p>
+                  <p className="text-sm text-gray-600 mb-1">{t('analysis.summary.positiveRatio')}</p>
                   <p className="text-2xl font-semibold text-gray-900">
                     {(analysisResult.summary.positiveRatio * 100).toFixed(1)}%
                   </p>
                 </div>
                 <div className="bg-blue-50 rounded-lg p-4">
-                  <p className="text-sm text-gray-600 mb-1">中性評價比例</p>
+                  <p className="text-sm text-gray-600 mb-1">{t('analysis.summary.neutralRatio')}</p>
                   <p className="text-2xl font-semibold text-gray-900">
                     {(analysisResult.summary.neutralRatio * 100).toFixed(1)}%
                   </p>
                 </div>
                 <div className="bg-blue-50 rounded-lg p-4">
-                  <p className="text-sm text-gray-600 mb-1">負評價比例</p>
+                  <p className="text-sm text-gray-600 mb-1">{t('analysis.summary.negativeRatio')}</p>
                   <p className="text-2xl font-semibold text-gray-900">
                     {(analysisResult.summary.negativeRatio * 100).toFixed(1)}%
                   </p>
                 </div>
                 <div className="bg-blue-50 rounded-lg p-4">
-                  <p className="text-sm text-gray-600 mb-1">平均用戶評分</p>
+                  <p className="text-sm text-gray-600 mb-1">{t('analysis.summary.averageRating')}</p>
                   <p className="text-2xl font-semibold text-gray-900">
                     {analysisResult.summary.averageRating.toFixed(1)}
                   </p>

@@ -132,6 +132,14 @@ const translations: Translations = {
     'analysis.startButton': '開始分析',
     'analysis.processing': '分析中...',
     
+    // 分析摘要相關
+    'analysis.summary.title': '分析摘要',
+    'analysis.summary.totalReviews': '篩選後評論數',
+    'analysis.summary.positiveRatio': '正面評價比例',
+    'analysis.summary.neutralRatio': '中性評價比例',
+    'analysis.summary.negativeRatio': '負評價比例',
+    'analysis.summary.averageRating': '平均用戶評分',
+    
     // 爬蟲頁面
     'scraper.title': '應用程式評論爬取',
     'scraper.inputAppName': '搜尋應用程式',
@@ -555,6 +563,14 @@ const translations: Translations = {
     'analysis.generateReport': '4. Generate detailed insight report after analysis',
     'analysis.startButton': 'Start Analysis',
     'analysis.processing': 'Analyzing...',
+    
+    // Analysis Summary
+    'analysis.summary.title': 'Analysis Summary',
+    'analysis.summary.totalReviews': 'Filtered Reviews',
+    'analysis.summary.positiveRatio': 'Positive Reviews',
+    'analysis.summary.neutralRatio': 'Neutral Reviews',
+    'analysis.summary.negativeRatio': 'Negative Reviews',
+    'analysis.summary.averageRating': 'Average Rating',
     
     // Scraper Page
     'scraper.title': 'App Review Scraper',
