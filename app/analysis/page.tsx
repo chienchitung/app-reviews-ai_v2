@@ -108,33 +108,6 @@ const validateDateInput = (dateString: string) => {
   return dateParts.join('-');
 };
 
-// 修改日期格式化顯示函數
-const formatDisplayDate = (dateString: string, language: string) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  
-  return language === 'zh' 
-    ? `${year}${t('filter.date.year')}${month}${t('filter.date.month')}${day}${t('filter.date.day')}`
-    : `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-};
-
-// 新增日期本地化格式轉換函數
-const convertLocaleDateToISO = (dateString: string) => {
-  if (!dateString) return '';
-  
-  // 處理 "YYYY年MM月DD日" 格式
-  const matches = dateString.match(/(\d{4})年(\d{1,2})月(\d{1,2})日?/);
-  if (matches) {
-    const [_, year, month, day] = matches;
-    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-  }
-  
-  return dateString;
-};
-
 export default function AnalysisPage() {
   const { t, language } = useLanguage();  // 確保引入 language
   const [file, setFile] = useState<File | null>(null);
@@ -164,7 +137,7 @@ export default function AnalysisPage() {
       if (!file.name.match(/\.(csv|xlsx|xls)$/i)) {
         alert('請上傳 .csv, .xlsx 或 .xls 格式的檔案');
         if (fileInputRef.current) {
-          fileInputRef.current.value = ''; // 清除無效的選���
+          fileInputRef.current.value = ''; // 清除無效的選擇
         }
         return;
       }
@@ -211,7 +184,7 @@ export default function AnalysisPage() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || '分���請求失敗');
+        throw new Error(result.error || '分類請求失敗');
       }
 
       if (!result.success || !result.data) {
@@ -284,7 +257,7 @@ export default function AnalysisPage() {
     }
   };
 
-  // 添加新的 state 來存儲 AI 分析結果
+  // 添加新的 state 來��儲 AI 分析結果
   const [aiAnalysis, setAiAnalysis] = useState<string>('');
   const [isGeneratingInsights, setIsGeneratingInsights] = useState(false);
 
@@ -525,6 +498,33 @@ export default function AnalysisPage() {
     
     // 關閉日期選擇器
     setShowDatePicker(false);
+  };
+
+  // 將 formatDisplayDate 移到組件內部
+  const formatDisplayDate = (dateString: string, currentLanguage: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    
+    return currentLanguage === 'zh' 
+      ? `${year}${t('filter.date.year')}${month}${t('filter.date.month')}${day}${t('filter.date.day')}`
+      : `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+  };
+
+  // 將 convertLocaleDateToISO 函數移到組件內部
+  const convertLocaleDateToISO = (dateString: string) => {
+    if (!dateString) return '';
+    
+    // 處理 "YYYY年MM月DD日" 格式
+    const matches = dateString.match(/(\d{4})年(\d{1,2})月(\d{1,2})日?/);
+    if (matches) {
+      const [_, year, month, day] = matches;
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+    
+    return dateString;
   };
 
   return (
