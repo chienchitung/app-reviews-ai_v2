@@ -2,12 +2,15 @@
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import type { Keyword } from '@/types/feedback';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface KeywordsBarChartProps {
   keywords: Keyword[];
 }
 
 export const KeywordsBarChart = ({ keywords }: KeywordsBarChartProps) => {
+  const { t } = useLanguage();
+  
   const total = keywords.reduce((sum, keyword) => sum + keyword.count, 0);
 
   const sortedData = [...keywords]
@@ -24,7 +27,7 @@ export const KeywordsBarChart = ({ keywords }: KeywordsBarChartProps) => {
       return (
         <div className="bg-white px-4 py-2 shadow-lg rounded-lg border border-gray-100">
           <p className="text-sm font-medium text-gray-900">
-            {data.word}：{data.count} 次 ({data.percentage}%)
+            {data.word}：{data.count} {t('analysis.times')} ({data.percentage}%)
           </p>
         </div>
       );

@@ -140,6 +140,12 @@ const translations: Translations = {
     'analysis.sentiment.neutral': '中性',
     'analysis.sentiment.negative': '負面',
     'analysis.reviews': '則',
+    'analysis.times': '次',
+    'analysis.sentiment': '情感分析',
+    'analysis.categories': '分類統計',
+    'analysis.keywords': '關鍵詞統計 (前20名)',
+    'analysis.ratingDetails': '評分分布詳情',
+    'analysis.wordCloud': '文字雲分布',
     
     // 分析摘要相關
     'analysis.summary.title': '分析摘要',
@@ -459,6 +465,17 @@ const translations: Translations = {
     'filter.date.month': '月',
     'filter.date.day': '日',
     'to': '至',
+    
+    // 評分分布詳情表格
+    'analysis.table.rating': '評分',
+    'analysis.table.reviewCount': '評論數',
+    'analysis.table.percentage': '佔比',
+    'analysis.table.total': '總計',
+    
+    // AI 洞察分析
+    'analysis.generateInsights': '生成洞察分析',
+    'analysis.generatingInsights': '生成分析中...',
+    'analysis.insightsTitle': 'AI 洞察分析結果',
   },
   en: {
     // Navigation
@@ -589,6 +606,12 @@ const translations: Translations = {
     'analysis.sentiment.neutral': 'Neutral',
     'analysis.sentiment.negative': 'Negative',
     'analysis.reviews': 'reviews',
+    'analysis.times': 'times',
+    'analysis.sentiment': 'Sentiment Analysis',
+    'analysis.categories': 'Category Statistics',
+    'analysis.keywords': 'Top 20 Keywords',
+    'analysis.ratingDetails': 'Rating Distribution Details',
+    'analysis.wordCloud': 'Word Cloud Distribution',
     
     // Scraper Page
     'scraper.title': 'App Review Scraper',
@@ -900,6 +923,17 @@ const translations: Translations = {
     'filter.date.month': 'Month',
     'filter.date.day': 'Day',
     'to': 'to',
+    
+    // Rating Distribution Table
+    'analysis.table.rating': 'Rating',
+    'analysis.table.reviewCount': 'Reviews',
+    'analysis.table.percentage': 'Percentage',
+    'analysis.table.total': 'Total',
+    
+    // AI Insights
+    'analysis.generateInsights': 'Generate Insights',
+    'analysis.generatingInsights': 'Generating Insights...',
+    'analysis.insightsTitle': 'AI Insights Analysis Results',
   }
 };
 

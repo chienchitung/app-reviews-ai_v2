@@ -2,12 +2,15 @@
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import type { AnalysisResult } from '@/types/feedback';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface CategoryBarChartProps {
   data: AnalysisResult['feedbacks'];
 }
 
 export const CategoryBarChart = ({ data }: CategoryBarChartProps) => {
+  const { t } = useLanguage();
+
   // 統計各分類的出現次數
   const categoryCount = data.reduce((acc, feedback) => {
     const categories = feedback.category.split(/[,，]/).map(c => c.trim());
@@ -37,7 +40,7 @@ export const CategoryBarChart = ({ data }: CategoryBarChartProps) => {
       return (
         <div className="bg-white px-4 py-2 shadow-lg rounded-lg border border-gray-100">
           <p className="text-sm font-medium text-gray-900">
-            {data.category}：{data.count} 筆 ({data.percentage}%)
+            {data.category}：{data.count} {t('analysis.reviews')} ({data.percentage}%)
           </p>
         </div>
       );

@@ -1209,7 +1209,7 @@ export default function AnalysisPage() {
 
             {/* 評論趨勢分析 */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h2 className="text-xl font-semibold mb-4 text-gray-900">評論趨勢分析</h2>
+              <h2 className="text-xl font-semibold mb-4 text-gray-900">{t('analysis.charts.monthlyTrend')}</h2>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="h-[300px] sm:h-[400px]">
                   {analysisResult && <MonthlyTrendChart data={analysisResult.feedbacks} />}
@@ -1223,14 +1223,14 @@ export default function AnalysisPage() {
             {/* 情感分析和分類統計 */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="bg-white rounded-xl p-6 shadow-sm">
-                <h2 className="text-xl font-semibold mb-4 text-gray-900">情感分析</h2>
+                <h2 className="text-xl font-semibold mb-4 text-gray-900">{t('analysis.sentiment')}</h2>
                 <div className="h-[300px] sm:h-[400px]">
                   {analysisResult && <SentimentPieChart data={analysisResult.feedbacks} />}
                 </div>
               </div>
 
               <div className="bg-white rounded-xl p-6 shadow-sm">
-                <h2 className="text-xl font-semibold mb-4 text-gray-900">分類統計</h2>
+                <h2 className="text-xl font-semibold mb-4 text-gray-900">{t('analysis.categories')}</h2>
                 <div className="h-[300px] sm:h-[400px]">
                   {analysisResult && <CategoryBarChart data={analysisResult.feedbacks} />}
                 </div>
@@ -1240,20 +1240,20 @@ export default function AnalysisPage() {
             {/* 關鍵詞統計和評分分布 */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="bg-white rounded-xl p-6 shadow-sm">
-                <h2 className="text-xl font-semibold mb-4 text-gray-900">關鍵詞統計 (前20名)</h2>
+                <h2 className="text-xl font-semibold mb-4 text-gray-900">{t('analysis.keywords')}</h2>
                 <div className="h-[300px] sm:h-[400px]">
                   {analysisResult && <KeywordsBarChart keywords={analysisResult.keywords} />}
                 </div>
               </div>
               <div className="bg-white rounded-xl p-6 shadow-sm">
-                <h2 className="text-xl font-semibold mb-4 text-gray-900">評分分布詳情</h2>
+                <h2 className="text-xl font-semibold mb-4 text-gray-900">{t('analysis.ratingDetails')}</h2>
                 <div className="h-[300px] sm:h-[400px]">
                   <table className="w-full">
                     <thead className="border-b border-gray-200">
                       <tr>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">評分</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">評論數</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">佔比</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">{t('analysis.table.rating')}</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">{t('analysis.table.reviewCount')}</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">{t('analysis.table.percentage')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
@@ -1290,7 +1290,7 @@ export default function AnalysisPage() {
                     </tbody>
                     <tfoot className="border-t border-gray-200">
                       <tr>
-                        <td className="px-4 py-3 font-medium">總計</td>
+                        <td className="px-4 py-3 font-medium">{t('analysis.table.total')}</td>
                         <td className="px-4 py-3 font-medium">
                           {analysisResult.feedbacks.length.toLocaleString()}
                         </td>
@@ -1304,7 +1304,7 @@ export default function AnalysisPage() {
 
             {/* 文字雲和 AI 分析區塊 */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h2 className="text-xl font-semibold mb-4 text-gray-900">文字雲分布</h2>
+              <h2 className="text-xl font-semibold mb-4 text-gray-900">{t('analysis.wordCloud')}</h2>
               
               {/* 調整文字雲容器高度和間距 */}
               <div className="mb-8">  {/* 添加底部間距 */}
@@ -1327,7 +1327,7 @@ export default function AnalysisPage() {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        <span>生成分析中...</span>
+                        {t('analysis.generatingInsights')}
                       </>
                     ) : (
                       <>
@@ -1344,7 +1344,7 @@ export default function AnalysisPage() {
                             d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
                           />
                         </svg>
-                        <span>生成洞察分析</span>
+                        {t('analysis.generateInsights')}
                       </>
                     )}
                   </button>
@@ -1353,7 +1353,7 @@ export default function AnalysisPage() {
                 {/* AI 分析結果 */}
                 {aiAnalysis && (
                   <div className="w-full bg-white rounded-lg p-6 shadow-sm">
-                    <h3 className="text-lg font-semibold mb-4 text-gray-900">AI 洞察分析結果</h3>
+                    <h3 className="text-lg font-semibold mb-4 text-gray-900">{t('analysis.insightsTitle')}</h3>
                     <div className="prose max-w-none whitespace-pre-wrap text-gray-700">
                       {aiAnalysis}
                     </div>
