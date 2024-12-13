@@ -2,6 +2,7 @@
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import type { AnalysisResult } from '@/types/feedback';
+import { useLanguage } from '@/contexts/LanguageContext'; // 新增引入
 
 interface TrendChartProps {
   data: AnalysisResult['feedbacks'];
@@ -38,6 +39,7 @@ const chartConfig = {
 
 // 每月評論數趨勢圖（按裝置區分）
 export const MonthlyTrendChart = ({ data }: TrendChartProps) => {
+  const { t } = useLanguage(); // 新增使用 useLanguage hook
   const monthlyData = data.reduce((acc, feedback) => {
     const date = new Date(feedback.date);
     const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
@@ -69,7 +71,9 @@ export const MonthlyTrendChart = ({ data }: TrendChartProps) => {
 
   return (
     <div className="w-full h-full">
-      <h3 className="text-center text-sm font-medium mb-4">每月評論數量趨勢 (按裝置分)</h3>
+      <h3 className="text-center text-sm font-medium mb-4">
+        {t('analysis.charts.monthlyTrend')} {/* 修改標題文字 */}
+      </h3>
       <div className="w-full h-[calc(100%-2rem)]">
         <ResponsiveContainer>
           <BarChart
@@ -85,7 +89,9 @@ export const MonthlyTrendChart = ({ data }: TrendChartProps) => {
                   return (
                     <div className="bg-white p-2 border border-gray-200 shadow-md">
                       <p className="font-medium">{label}</p>
-                      <p className="text-gray-600">總評論數: {payload[0]?.payload.total}</p>
+                      <p className="text-gray-600">
+                        {t('analysis.charts.totalReviews')}: {payload[0]?.payload.total} {/* 修改提示文字 */}
+                      </p>
                       {payload.map((entry) => (
                         entry.dataKey !== 'total' && (
                           <p key={entry.dataKey} style={{ color: entry.color }}>
@@ -125,6 +131,7 @@ export const MonthlyTrendChart = ({ data }: TrendChartProps) => {
 
 // 評分分布圖（按裝置區分）
 export const RatingDistributionChart = ({ data }: TrendChartProps) => {
+  const { t } = useLanguage(); // 新增使用 useLanguage hook
   const ratingDistribution = data.reduce((acc, item) => {
     const rating = Math.floor(item.rating);
     if (!acc[rating]) {
@@ -139,7 +146,7 @@ export const RatingDistributionChart = ({ data }: TrendChartProps) => {
   }, {} as Record<number, { total: number; devices: Record<string, number> }>);
 
   const chartData = Array.from({ length: 5 }, (_, i) => i + 1).map(rating => ({
-    rating: `${rating}星`,
+    rating: `${rating}`,
     total: ratingDistribution[rating]?.total || 0,
     ...Object.fromEntries(
       Object.entries(ratingDistribution[rating]?.devices || {}).map(([device, count]) => [
@@ -153,7 +160,9 @@ export const RatingDistributionChart = ({ data }: TrendChartProps) => {
 
   return (
     <div className="w-full h-full">
-      <h3 className="text-center text-sm font-medium mb-4">評分分布 (按裝置分)</h3>
+      <h3 className="text-center text-sm font-medium mb-4">
+        {t('analysis.charts.ratingDistribution')} {/* 修改標題文字 */}
+      </h3>
       <div className="w-full h-[calc(100%-2rem)]">
         <ResponsiveContainer>
           <BarChart
@@ -169,7 +178,9 @@ export const RatingDistributionChart = ({ data }: TrendChartProps) => {
                   return (
                     <div className="bg-white p-2 border border-gray-200 shadow-md">
                       <p className="font-medium">{label}</p>
-                      <p className="text-gray-600">總評論數: {payload[0]?.payload.total}</p>
+                      <p className="text-gray-600">
+                        {t('analysis.charts.totalReviews')}: {payload[0]?.payload.total} {/* 修改提示文字 */}
+                      </p>
                       {payload.map((entry) => (
                         entry.dataKey !== 'total' && (
                           <p key={entry.dataKey} style={{ color: entry.color }}>

@@ -131,6 +131,15 @@ const translations: Translations = {
     'analysis.generateReport': '4. 分析完成後可生成詳細洞察報告',
     'analysis.startButton': '開始分析',
     'analysis.processing': '分析中...',
+
+    // 分析圖表
+    'analysis.charts.monthlyTrend': '每月評論數量趨勢 (按裝置分)',
+    'analysis.charts.ratingDistribution': '評分分布 (按裝置分)',
+    'analysis.charts.totalReviews': '總評論數',
+    'analysis.sentiment.positive': '正面',
+    'analysis.sentiment.neutral': '中性',
+    'analysis.sentiment.negative': '負面',
+    'analysis.reviews': '則',
     
     // 分析摘要相關
     'analysis.summary.title': '分析摘要',
@@ -571,6 +580,15 @@ const translations: Translations = {
     'analysis.summary.neutralRatio': 'Neutral Reviews',
     'analysis.summary.negativeRatio': 'Negative Reviews',
     'analysis.summary.averageRating': 'Average Rating',
+
+    // Analysis Charts
+    'analysis.charts.monthlyTrend': 'Monthly Review Trend (By Device)',
+    'analysis.charts.ratingDistribution': 'Rating Distribution (By Device)',
+    'analysis.charts.totalReviews': 'Total Reviews',
+    'analysis.sentiment.positive': 'Positive',
+    'analysis.sentiment.neutral': 'Neutral',
+    'analysis.sentiment.negative': 'Negative',
+    'analysis.reviews': 'reviews',
     
     // Scraper Page
     'scraper.title': 'App Review Scraper',
