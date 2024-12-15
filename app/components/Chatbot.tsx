@@ -4,7 +4,8 @@ import { useState, useRef, useEffect } from 'react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SITE_CONTENT } from '../utils/siteContent';
 import { useMediaQuery } from 'react-responsive';
-import { Bot } from 'lucide-react';
+import { Bot, Globe } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 const model = genAI.getGenerativeModel({
@@ -22,7 +23,8 @@ interface Message {
   content: string;
 }
 
-const SYSTEM_PROMPT = `你是一個專業的APP評論分析平台助手，具備以下兩種專業能力，請根據問題類型自動切換合適的回答方式：
+const SYSTEM_PROMPT = {
+  zh: `你是一個專業的APP評論分析平台助手，具備以下兩種專業能力，請根據問題類型自動切換合適的回答方式：
 
 1. 平台服務諮詢能力：
 - 熟悉平台所有功能和操作流程
@@ -32,6 +34,8 @@ const SYSTEM_PROMPT = `你是一個專業的APP評論分析平台助手，具備
 回答風格：專業、親切、具體明確，著重於解決用戶的實際問題
 
 2. 數據分析諮詢能力：
+- 熟悉App評論分析流程
+- 可以解答關於App評論分析的問題
 - 協助分析APP評論數據
 - 提供專業的數據解讀和建議
 - 找用戶反饋中的關鍵洞察
@@ -47,61 +51,139 @@ const SYSTEM_PROMPT = `你是一個專業的APP評論分析平台助手，具備
 6. 不要在回答中提及或說明目前使用哪種角色
 7. 不要在回答中提及或說明目前使用哪種專業能力
 8. 回答內容不要有 " * "符號
-9. 回答請使用繁體中文
+9. 回答請使用繁體中文`,
 
-請根據用戶的問題自動判斷使用適合的回答方式，若用戶詢問的問題與平台不相關，請委婉回覆無法解答。`;
+  en: `You are a professional APP review analysis platform assistant with two professional capabilities. Please switch between appropriate response methods based on the type of question:
 
-const getRelevantContent = (query: string): string => {
+1. Platform Service Consultation:
+- Familiar with all platform features and processes
+- Can answer questions about platform usage
+- Provide payment plans and pricing consultation
+- Handle technical support issues
+Response style: Professional, friendly, specific, focusing on solving users' practical problems
+
+2. Data Analysis Consultation:
+- Help analyze APP review data
+- Provide professional data interpretation and suggestions
+- Find key insights from user feedback
+- Provide direction and optimization strategies
+Response style: Data-driven, professional analysis, providing actionable suggestions
+
+Response principles:
+1. Directly address the core issue and provide solutions
+2. Maintain professional and friendly dialogue style
+3. Answers should be specific and concise
+4. Proactively provide extended suggestions when appropriate
+5. For unclear questions, proactively ask for details
+6. Do not mention or explain which role is currently being used
+7. Do not mention or explain which professional capability is being used
+8. Response content should not contain "*" symbols
+9. Please respond in English`
+};
+
+const getRelevantContent = (query: string, language: string): string => {
   const queryLower = query.toLowerCase();
   let relevantInfo = [];
 
   // 定義關鍵字映射
   const keywordMappings = {
     pricing: {
-      keywords: ['價格', '方案', '收費', '費用', '付費', '訂閱', '基本版', '專業版', '進階版'],
-      getContent: () => `
+      keywords: [
+        // 中文關鍵字
+        '價格', '方案', '收費', '費用', '付費', '訂閱', '基本版', '專業版', '進階版',
+        // 英文關鍵字
+        'price', 'pricing', 'plan', 'subscription', 'payment', 'cost', 'fee', 'basic', 'professional', 'premium'
+      ],
+      getContent: (lang: string) => lang === 'zh' ? `
 價格方案詳細資訊：
 基本版 ${SITE_CONTENT.pricing.basic.name}（${SITE_CONTENT.pricing.basic.price}）：
 ${SITE_CONTENT.pricing.basic.features.map(f => `- ${f}`).join('\n')}
 
 專業版 ${SITE_CONTENT.pricing.pro.name}（${SITE_CONTENT.pricing.pro.price}）：
+${SITE_CONTENT.pricing.pro.features.map(f => `- ${f}`).join('\n')}` : `
+Pricing Plan Details:
+Basic Plan ${SITE_CONTENT.pricing.basic.name} (${SITE_CONTENT.pricing.basic.price}):
+${SITE_CONTENT.pricing.basic.features.map(f => `- ${f}`).join('\n')}
+
+Professional Plan ${SITE_CONTENT.pricing.pro.name} (${SITE_CONTENT.pricing.pro.price}):
 ${SITE_CONTENT.pricing.pro.features.map(f => `- ${f}`).join('\n')}`
     },
     scraper: {
-      keywords: ['爬取', '收集', '下載', '資料來源', 'app store', 'play store'],
-      getContent: () => `
+      keywords: [
+        // 中文關鍵字
+        '爬取', '收集', '下載', '資料來源', 'app store', 'play store',
+        // 英文關鍵字
+        'scrape', 'collect', 'download', 'data source', 'crawl', 'fetch', 'gather'
+      ],
+      getContent: (lang: string) => lang === 'zh' ? `
 資料爬取功能說明：
 ${SITE_CONTENT.features.scraper.description}
 使用方式：${SITE_CONTENT.features.scraper.usage}
-費用說明：${SITE_CONTENT.features.scraper.pricing}`
+費用說明：${SITE_CONTENT.features.scraper.pricing}` : `
+Data Scraping Feature:
+${SITE_CONTENT.features.scraper.description}
+How to use: ${SITE_CONTENT.features.scraper.usage}
+Pricing: ${SITE_CONTENT.features.scraper.pricing}`
     },
     analysis: {
-      keywords: ['分析', '報告', '見解', '洞察', '統計', '圖表', '儀表板', '情感分析', '關鍵字'],
-      getContent: () => `
+      keywords: [
+        // 中文關鍵字
+        '分析', '報告', '見解', '洞察', '統計', '圖表', '儀表板', '情感分析', '關鍵字',
+        // 英文關鍵字
+        'analysis', 'report', 'insight', 'statistics', 'chart', 'dashboard', 'sentiment', 'keyword', 'analytics', 'analyze'
+      ],
+      getContent: (lang: string) => lang === 'zh' ? `
 數據分析功能說明：
 ${SITE_CONTENT.features.analysis.description}
 
 分析功能包含：
 ${SITE_CONTENT.features.analysis.features.map(f => `- ${f}`).join('\n')}
 
-使用方式：${SITE_CONTENT.features.analysis.usage}`
+使用方式：${SITE_CONTENT.features.analysis.usage}` : `
+Data Analysis Features:
+${SITE_CONTENT.features.analysis.description}
+
+Analysis Features Include:
+${SITE_CONTENT.features.analysis.features.map(f => `- ${f}`).join('\n')}
+
+How to use: ${SITE_CONTENT.features.analysis.usage}`
     },
     search: {
-      keywords: ['搜尋', '查詢', '找', '過濾', '篩選'],
-      getContent: () => `
+      keywords: [
+        // 中文關鍵字
+        '搜尋', '查詢', '找', '過濾', '篩選',
+        // 英文關鍵字
+        'search', 'query', 'find', 'filter', 'browse', 'look up', 'lookup'
+      ],
+      getContent: (lang: string) => lang === 'zh' ? `
 搜尋功能說明：
 ${SITE_CONTENT.features.search.description}
-使用方式：${SITE_CONTENT.features.search.usage}`
+使用方式：${SITE_CONTENT.features.search.usage}` : `
+Search Feature:
+${SITE_CONTENT.features.search.description}
+How to use: ${SITE_CONTENT.features.search.usage}`
     },
     support: {
-      keywords: ['聯絡', '客服', '支援', '幫助', '問題', '聯繫', '電話', 'email', '信箱'],
-      getContent: () => `
+      keywords: [
+        // 中文關鍵字
+        '聯絡', '客服', '支援', '幫助', '問題', '聯繫', '電話', 'email', '信箱',
+        // 英文關鍵字
+        'contact', 'support', 'help', 'issue', 'phone', 'email', 'service', 'assistance'
+      ],
+      getContent: (lang: string) => lang === 'zh' ? `
 客服支援資訊：
 - 客服信箱：${SITE_CONTENT.support.contact.email}
 - 服務電話：${SITE_CONTENT.support.contact.phone}
 - 服務時間：${SITE_CONTENT.support.contact.hours}
 
 常見問題：
+${SITE_CONTENT.support.faq.map(faq => `Q: ${faq.question}\nA: ${faq.answer}`).join('\n\n')}` : `
+Customer Support Information:
+- Support Email: ${SITE_CONTENT.support.contact.email}
+- Service Phone: ${SITE_CONTENT.support.contact.phone}
+- Service Hours: ${SITE_CONTENT.support.contact.hours}
+
+FAQ:
 ${SITE_CONTENT.support.faq.map(faq => `Q: ${faq.question}\nA: ${faq.answer}`).join('\n\n')}`
     }
   };
@@ -109,18 +191,23 @@ ${SITE_CONTENT.support.faq.map(faq => `Q: ${faq.question}\nA: ${faq.answer}`).jo
   // 檢查每個類別的關鍵字
   Object.entries(keywordMappings).forEach(([category, { keywords, getContent }]) => {
     if (keywords.some(keyword => queryLower.includes(keyword))) {
-      relevantInfo.push(getContent());
+      relevantInfo.push(getContent(language));
     }
   });
 
   // 如果沒有找到相關內容，返回基本平台介紹
   if (relevantInfo.length === 0) {
-    relevantInfo.push(`
+    relevantInfo.push(language === 'zh' ? `
 平台基本介紹：
 我們的平台提供以下核心功能：
 1. ${SITE_CONTENT.features.scraper.title}：${SITE_CONTENT.features.scraper.description}
 2. ${SITE_CONTENT.features.analysis.title}：${SITE_CONTENT.features.analysis.description}
-3. ${SITE_CONTENT.features.search.title}：${SITE_CONTENT.features.search.description}`);
+3. ${SITE_CONTENT.features.search.title}：${SITE_CONTENT.features.search.description}` : `
+Platform Introduction:
+Our platform provides the following core features:
+1. ${SITE_CONTENT.features.scraper.title}: ${SITE_CONTENT.features.scraper.description}
+2. ${SITE_CONTENT.features.analysis.title}: ${SITE_CONTENT.features.analysis.description}
+3. ${SITE_CONTENT.features.search.title}: ${SITE_CONTENT.features.search.description}`);
   }
 
   return relevantInfo.join('\n\n');
@@ -133,36 +220,53 @@ interface QuickQuestion {
   path?: string;
 }
 
-// 修改 QUICK_QUESTIONS，添加所有按鈕的路徑
-const QUICK_QUESTIONS: QuickQuestion[] = [
-  {
-    text: "爬取評論教學",
-    question: "請問如何開始爬取APP評論數據？",
-    path: "/scraper"
-  },
-  {
-    text: "分析功能介紹",
-    question: "想了解數據分析功能有哪些？",
-    path: "/analysis"
-  },
-  {
-    text: "查詢方案價格",
-    question: "請問有什麼價格方案？",
-    path: "/pricing"
-  }
-];
+// 修改 QUICK_QUESTIONS，添加中英文支援
+const QUICK_QUESTIONS: {
+  [key: string]: QuickQuestion[];
+} = {
+  zh: [
+    {
+      text: "爬取評論教學",
+      question: "請問如何開始爬取APP評論數據？",
+      path: "/scraper"
+    },
+    {
+      text: "分析功能介紹",
+      question: "想了解數據分析功能有哪些？",
+      path: "/analysis"
+    },
+    {
+      text: "查詢方案價格",
+      question: "請問有什麼價格方案？",
+      path: "/pricing"
+    }
+  ],
+  en: [
+    {
+      text: "Scraping Tutorial",
+      question: "How do I start scraping APP review data?",
+      path: "/scraper"
+    },
+    {
+      text: "Analysis Features",
+      question: "What analysis features are available?",
+      path: "/analysis"
+    },
+    {
+      text: "Pricing Plans",
+      question: "What pricing plans are available?",
+      path: "/pricing"
+    }
+  ]
+};
 
 const SCROLL_AMOUNT = 200; // 每次滾動的像素數
 
 const Chatbot = () => {
+  const { language, setLanguage, t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [isQuickQuestionsOpen, setIsQuickQuestionsOpen] = useState(true);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: 'assistant',
-      content: '您好！我是您的 AI小助手。我可以：\n1. 協助您了解平台功能與操作方式\n2. 提供專業的數據分析建議\n\n請問有什麼我可以幫您的嗎？'
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -217,24 +321,20 @@ const Chatbot = () => {
       content: inputMessage
     };
 
-    // 立即清空輸入框並顯示使用者訊息
     setInputMessage('');
     setMessages(prev => [...prev, userMessage]);
     
     try {
       setIsLoading(true);
       
-      // 檢查 API key 是否存在
       if (!process.env.GEMINI_API_KEY) {
         throw new Error('Gemini API key is not configured');
       }
 
-      // 獲取相關內容
-      const relevantContent = getRelevantContent(inputMessage);
+      const relevantContent = getRelevantContent(inputMessage, language);
 
-      // 組合完整提示詞
       const prompt = `
-${SYSTEM_PROMPT}
+${SYSTEM_PROMPT[language]}
 
 相關平台資訊：
 ${relevantContent}
@@ -256,7 +356,6 @@ ${userMessage.content}
         content: text
       };
       
-      // 更新訊息列表，加入 AI 的回應
       setMessages(prev => [...prev, aiMessage]);
 
     } catch (error) {
@@ -267,15 +366,20 @@ ${userMessage.content}
         timestamp: new Date().toISOString(),
       });
 
-      let errorMessage = '抱歉，系統暫時無法處理您的請求。';
+      let errorMessage = language === 'zh' 
+        ? '抱歉，系統暫時無法處理您的請求。' 
+        : 'Sorry, the system is temporarily unable to process your request.';
       
       if (!process.env.GEMINI_API_KEY) {
-        errorMessage = '系統配置錯誤，請聯繫管理員。';
+        errorMessage = language === 'zh'
+          ? '系統配置錯誤，請聯繫管理員。'
+          : 'System configuration error, please contact administrator.';
       } else if (error instanceof Error) {
-        errorMessage += '\n錯誤詳情：' + error.message;
+        errorMessage += language === 'zh'
+          ? '\n錯誤詳情：' + error.message
+          : '\nError details: ' + error.message;
       }
 
-      // 更新訊息列表，加入錯誤訊息
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: errorMessage
@@ -311,7 +415,9 @@ ${userMessage.content}
   const handleClearChat = () => {
     setMessages([{
       role: 'assistant',
-      content: '您好！我是您的 AI小助手。我可以：\n1. 協助您了解平台功能與操作方式\n2. 提供專業的數據分析建議\n\n請問有什麼我可以幫您的嗎？'
+      content: language === 'zh' 
+        ? '您好！我是您的 AI小助手。我可以：\n1. 協助您了解平台功能與操作方式\n2. 提供專業的數據分析建議\n\n請問有什麼我可以幫您的嗎？'
+        : 'Hello! I am your AI assistant. I can:\n1. Help you understand platform features and operations\n2. Provide professional data analysis advice\n\nHow may I assist you?'
     }]);
   };
 
@@ -323,7 +429,7 @@ ${userMessage.content}
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // 當訊息更新時自動滾動到底部
+  // 當訊息新時自動滾動到底部
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -349,6 +455,21 @@ ${userMessage.content}
       document.body.style.width = '';
     };
   }, [isOpen, isMobile]);
+
+  // 添加語言切換函數
+  const toggleLanguage = () => {
+    setLanguage(language === 'zh' ? 'en' : 'zh');
+  };
+
+  // 初始化對話訊息
+  useEffect(() => {
+    setMessages([{
+      role: 'assistant',
+      content: language === 'zh' 
+        ? '您好！我是您的 AI小助手。我可以：\n1. 協助您了解平台功能與操作方式\n2. 提供專業的數據分析建議\n\n請問有什麼我可以幫您的嗎？'
+        : 'Hello! I am your AI assistant. I can:\n1. Help you understand platform features and operations\n2. Provide professional data analysis advice\n\nHow may I assist you?'
+    }]);
+  }, [language]);
 
   return (
     <div className="fixed bottom-4 right-4 z-50 max-w-[95vw]">
@@ -384,14 +505,22 @@ ${userMessage.content}
           <div className="p-4 border-b border-gray-200 flex justify-between items-center">
             <h3 className="text-lg font-semibold flex items-center gap-2">
               <Bot className="h-5 w-5 text-blue-500" />
-              AI小助手
+              {language === 'zh' ? 'AI小助手' : 'AI Assistant'}
             </h3>
             <div className="flex items-center gap-2">
-              {/* 新增清除對話按鈕 */}
+              {/* 添加語言切換按鈕 */}
+              <button
+                onClick={toggleLanguage}
+                className="p-2 hover:bg-gray-100 rounded-full text-gray-500"
+                title={language === 'zh' ? '切換至英文' : 'Switch to Chinese'}
+              >
+                <Globe className="h-5 w-5" />
+              </button>
+              {/* 清除對話按鈕 */}
               <button
                 onClick={handleClearChat}
                 className="p-2 hover:bg-gray-100 rounded-full text-gray-500"
-                title="清除對話"
+                title={language === 'zh' ? '清除對話' : 'Clear Chat'}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -449,15 +578,12 @@ ${userMessage.content}
             </div>
           </div>
 
-          <div className={`
-            border-t border-gray-200
-            ${isMobile ? 'fixed bottom-[70px] left-0 right-0 bg-white z-10' : ''}
-          `}>
+          <div className="border-t border-gray-200">
             <button
               onClick={() => setIsQuickQuestionsOpen(!isQuickQuestionsOpen)}
               className="w-full px-4 py-2 flex items-center justify-between text-sm text-gray-600 hover:bg-gray-50"
             >
-              <span>快速問題</span>
+              <span>{language === 'zh' ? '快速問題' : 'Quick Questions'}</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className={`h-4 w-4 transition-transform duration-300 ${
@@ -489,7 +615,7 @@ ${userMessage.content}
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
               >
                 <div className="flex gap-2 w-max px-2 py-2">
-                  {QUICK_QUESTIONS.map((item, index) => (
+                  {QUICK_QUESTIONS[language].map((item, index) => (
                     <button
                       key={index}
                       onClick={() => handleQuickQuestion(item)}
@@ -528,17 +654,14 @@ ${userMessage.content}
             </div>
           </div>
 
-          <div className={`
-            p-4 border-t border-gray-200
-            ${isMobile ? 'fixed bottom-0 left-0 right-0 bg-white z-10' : ''}
-          `}>
+          <div className="p-4 border-t border-gray-200">
             <div className="flex space-x-2">
               <input
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="輸入訊息..."
+                placeholder={language === 'zh' ? "輸入訊息..." : "Type a message..."}
                 className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
                 disabled={isLoading}
               />
@@ -551,7 +674,7 @@ ${userMessage.content}
                     : 'bg-blue-500 hover:bg-blue-600'
                 }`}
               >
-                發送
+                {language === 'zh' ? '發送' : 'Send'}
               </button>
             </div>
           </div>
