@@ -472,13 +472,23 @@ ${userMessage.content}
   }, [language]);
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 max-w-[95vw]">
+    <div className={`
+      fixed z-50
+      ${isMobile 
+        ? 'bottom-0 right-0 left-0 pb-[env(safe-area-inset-bottom,20px)]'
+        : 'bottom-4 right-4 max-w-[95vw]'
+      }
+    `}>
       <button
         onClick={handleToggleChat}
         className={`
           bg-blue-500 hover:bg-blue-600 text-white rounded-full p-3 
           shadow-lg transition-all duration-200
-          ${isMobile && isOpen ? 'hidden' : ''}
+          ${isMobile 
+            ? isOpen 
+              ? 'hidden' 
+              : 'fixed bottom-[calc(env(safe-area-inset-bottom,20px)+16px)] right-4'
+            : ''}
         `}
       >
         {isOpen ? (
@@ -495,7 +505,7 @@ ${userMessage.content}
       {isOpen && (
         <div className={`
           ${isMobile 
-            ? 'fixed inset-0 w-full h-full' 
+            ? 'fixed inset-0 w-full h-[calc(100%-env(safe-area-inset-bottom,0px))]'
             : 'absolute bottom-16 right-0 w-[320px] sm:w-[380px] max-h-[80vh]'
           }
           bg-white rounded-lg shadow-xl border border-gray-200
@@ -543,8 +553,8 @@ ${userMessage.content}
             overflow-y-auto p-4 transition-all duration-300
             ${isMobile 
               ? isQuickQuestionsOpen 
-                ? 'h-[calc(100vh-300px)]'
-                : 'h-[calc(100vh-180px)]'
+                ? 'h-[calc(100vh-300px-env(safe-area-inset-bottom,20px))]'
+                : 'h-[calc(100vh-180px-env(safe-area-inset-bottom,20px))]'
               : isQuickQuestionsOpen 
                 ? 'max-h-[calc(60vh-180px)]'
                 : 'max-h-[calc(60vh-120px)]'
