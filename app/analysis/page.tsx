@@ -31,10 +31,9 @@ interface Filters {
     start: string;
     end: string;
   };
-  companies: string[];  // 新增公司篩選
   devices: string[];
   ratings: number[];
-  sentiments: string[];
+  sentiments: string[];  // 這裡存儲 'positive', 'neutral', 'negative'
   categories: string[];
 }
 
@@ -298,24 +297,22 @@ export default function AnalysisPage() {
 
   const [showDataTable, setShowDataTable] = useState(true);
 
-  // 初始化 filters state
+  // 新增篩選器區塊
   const [filters, setFilters] = useState<Filters>({
     dateRange: { start: '', end: '' },
-    companies: [],  // 新增公司篩選
     devices: [],
     ratings: [],
     sentiments: [],
     categories: []
   });
 
-  // 修改篩選邏輯
+  // 修改 handleFilterChange 函數
   const handleFilterChange = (newFilters: Filters) => {
     setFilters(newFilters);
     
     if (originalData) {
+      // 每次都從原始數據開始篩選
       const filteredData = originalData.feedbacks.filter(feedback => {
-        const matchCompany = newFilters.companies.length === 0 || 
-                            newFilters.companies.includes(feedback.company);
         const date = new Date(feedback.date);
         const matchDate = (!newFilters.dateRange.start || date >= new Date(newFilters.dateRange.start)) &&
                          (!newFilters.dateRange.end || date <= new Date(newFilters.dateRange.end));
@@ -334,7 +331,7 @@ export default function AnalysisPage() {
         const matchCategory = newFilters.categories.length === 0 || 
                             feedback.category.split(/[,，]/).some(cat => newFilters.categories.includes(cat.trim()));
         
-        return matchCompany && matchDate && matchDevice && matchRating && matchSentiment && matchCategory;
+        return matchDate && matchDevice && matchRating && matchSentiment && matchCategory;
       });
 
       // 更新摘要數據
@@ -474,7 +471,6 @@ export default function AnalysisPage() {
     // 重置篩選條件 - 移除日期範圍重置為預設值
     setFilters({
       dateRange: { start: '', end: '' }, // 清空日期範圍
-      companies: [],  // 新增公司篩選
       devices: [],
       ratings: [],
       sentiments: [],
@@ -656,46 +652,60 @@ export default function AnalysisPage() {
           {showDataTable && (
             <section className="mb-12 bg-white rounded-xl shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
+                <table className="w-full">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
-                        {t('table.company')}
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-28">
-                        {t('table.date')}
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/3">
-                        {t('table.review')}
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
-                        {t('table.rating')}
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
-                        {t('table.device')}
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
-                        {t('table.category')}
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
-                        {t('table.sentiment')}
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {t('table.keywords')}
-                      </th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 w-32">{t('table.company')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 w-32">{t('table.date')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">{t('table.review')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 w-24">{t('table.rating')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 w-32">{t('table.device')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 w-32">{t('table.category')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 w-32">{t('table.sentiment')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 w-48">{t('table.keywords')}</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {getCurrentPageData().map((feedback, index) => (
+                  <tbody className="divide-y divide-gray-200">
+                    {getCurrentPageData().map((feedback: AnalysisResult['feedbacks'][0], index: number) => (
                       <tr key={index} className="hover:bg-gray-50">
                         <td className="px-6 py-4 text-sm text-gray-900">{feedback.company}</td>
                         <td className="px-6 py-4 text-sm text-gray-900">{feedback.date}</td>
                         <td className="px-6 py-4 text-sm text-gray-900">{feedback.content}</td>
                         <td className="px-6 py-4 text-sm text-gray-900">{feedback.rating}</td>
                         <td className="px-6 py-4 text-sm text-gray-900">{feedback.device}</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">{feedback.category}</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">{feedback.sentiment}</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">{feedback.keywords.join(', ')}</td>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-wrap gap-1">
+                            {feedback.category.split(/[,，]/).map((category: string, cidx: number) => (
+                              <span 
+                                key={cidx} 
+                                className="px-2 py-1 text-xs font-medium rounded-full bg-amber-100 text-amber-800"
+                              >
+                                {category.trim()}
+                              </span>
+                            ))}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                            feedback.sentiment.includes('正面') ? 'bg-green-100 text-green-800' :
+                            feedback.sentiment.includes('負面') ? 'bg-red-100 text-red-800' :
+                            'bg-gray-100 text-gray-800'
+                          }`}>
+                            {feedback.sentiment}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-wrap gap-1">
+                            {feedback.keywords.map((keyword: string, kidx: number) => (
+                              <span 
+                                key={kidx} 
+                                className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full"
+                              >
+                                {keyword}
+                              </span>
+                            ))}
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>

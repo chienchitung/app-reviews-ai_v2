@@ -194,26 +194,17 @@ export async function POST(request: NextRequest) {
           console.log('檔案欄位:', Object.keys(row));
         }
 
-        // 尋找對應的欄位名稱（不區分大小寫）
-        const findColumn = (searchTerms: string[]): string => {
-          const columns = Object.keys(row);
-          // 先嘗試完全匹配
-          for (const term of searchTerms) {
-            const found = columns.find(col => 
-              col.toLowerCase() === term.toLowerCase()
-            );
-            if (found) return row[found];
-          }
-          // 如果沒有完全匹配，再嘗試部分匹配
-          for (const term of searchTerms) {
-            const found = columns.find(col => 
-              col.toLowerCase().includes(term.toLowerCase()) ||
-              term.toLowerCase().includes(col.toLowerCase())
-            );
-            if (found) return row[found];
-          }
-          return '';
+        // 建立一個函數來尋找符合關鍵字的欄位值
+        const findColumn = (terms: string[]) => {
+          const foundKey = Object.keys(row).find(key => 
+            terms.some(term => key.toLowerCase().includes(term.toLowerCase()))
+          );
+          return foundKey ? row[foundKey] : null;
         };
+
+        // 公司處理
+        const companyTerms = ['公司', 'company', 'brand', '品牌', 'app', '應用程式'];
+        const company = findColumn(companyTerms) || '未知';
 
         // 內容處理（必要欄位）
         const contentTerms = [
@@ -280,25 +271,22 @@ export async function POST(request: NextRequest) {
         const sentimentTerms = ['情感', 'sentiment', '情緒'];
         const sentiment = findColumn(sentimentTerms) || '中性';
 
-        // 公司欄位處理
-        const companyTerms = ['公司', '企業', 'company', 'organization'];
-        const company = findColumn(companyTerms) || '未知';
-
         return {
-          company,
+          id: `review-${index}`,
+          company: company,
           date: formattedDate,
-          content: content || '',
+          content: content,
           rating: parseFloat(ratingValue) || 0,
           device: device,
-          category: categories.join(','),
+          category: categories.join(', '),
           sentiment: sentiment,
           keywords: keywords
         };
       });
 
-      // 收集所有關鍵詞並計算出現次數
-      const keywordCounts = normalizedData.reduce((acc, item) => {
-        item.keywords.forEach(keyword => {
+      // 計算關鍵詞出現頻率
+      const keywordCounts = normalizedData.reduce((acc, row) => {
+        row.keywords.forEach((keyword: string) => {
           acc[keyword] = (acc[keyword] || 0) + 1;
         });
         return acc;

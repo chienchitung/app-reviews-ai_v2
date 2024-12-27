@@ -439,12 +439,16 @@ const translations: Translations = {
     // 資料表格相關
     'table.company': '公司',
     'table.date': '日期',
+    'table.username': '用戶名稱',
     'table.review': '評論內容',
     'table.rating': '評分',
+    'table.platform': '平台',
+    'table.developerResponse': '開發者回覆',
+    'table.language': '語言',
     'table.device': '裝置',
     'table.category': '分類',
     'table.sentiment': '情感',
-    'table.keywords': '關鍵字',
+    'table.keywords': '關鍵詞',
     
     // 分頁相關
     'pagination.showing': '顯示第',
@@ -894,8 +898,12 @@ const translations: Translations = {
     // Table
     'table.company': 'Company',
     'table.date': 'Date',
+    'table.username': 'Username',
     'table.review': 'Review',
     'table.rating': 'Rating',
+    'table.platform': 'Platform',
+    'table.developerResponse': 'Developer Response',
+    'table.language': 'Language',
     'table.device': 'Device',
     'table.category': 'Category',
     'table.sentiment': 'Sentiment',
