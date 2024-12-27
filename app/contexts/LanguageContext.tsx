@@ -48,6 +48,9 @@ const translations: Translations = {
     'filter.last14days': '最近 14 天',
     'filter.last30days': '最近 30 天',
     'filter.last3Months': '最近 3 個月',
+    'filter.selectedCompanies': '已選擇 {count} 個應用程式',
+    'filter.selectCompany': '選擇應用程式',
+    'filter.companies': '應用程式',
     
     // 篩選器選項
     'filter.rating.1': '1 星',
@@ -507,7 +510,9 @@ const translations: Translations = {
     'filter.last14days': 'Last 14 Days',
     'filter.last30days': 'Last 30 Days',
     'filter.last3Months': 'Last 3 Months',
-    
+    'filter.selectedCompanies': '{count} apps selected',
+    'filter.selectCompany': 'Select Application',
+    'filter.companies': 'Applications',
     // Filter Options
     'filter.rating.1': '1 Star',
     'filter.rating.2': '2 Stars',
