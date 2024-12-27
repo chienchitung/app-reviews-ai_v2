@@ -280,15 +280,19 @@ export async function POST(request: NextRequest) {
         const sentimentTerms = ['情感', 'sentiment', '情緒'];
         const sentiment = findColumn(sentimentTerms) || '中性';
 
+        // 公司欄位處理
+        const companyTerms = ['公司', '企業', 'company', 'organization'];
+        const company = findColumn(companyTerms) || '未知';
+
         return {
-          id: uuidv4(),
+          company,
           date: formattedDate,
           content: content || '',
-          rating: Number(ratingValue) || 5,
-          device,
-          category: categories.join(', '),
-          sentiment,
-          keywords
+          rating: parseFloat(ratingValue) || 0,
+          device: device,
+          category: categories.join(','),
+          sentiment: sentiment,
+          keywords: keywords
         };
       });
 

@@ -30,8 +30,8 @@ export interface ApiResponse {
 }
 
 export interface AnalysisResult {
-  feedbacks: Array<{
-    id: string;
+  feedbacks: {
+    company: string;
     date: string;
     content: string;
     rating: number;
@@ -39,8 +39,11 @@ export interface AnalysisResult {
     category: string;
     sentiment: string;
     keywords: string[];
-  }>;
-  keywords: Keyword[];
+  }[];
+  keywords: {
+    word: string;
+    count: number;
+  }[];
   summary: {
     totalCount: number;
     averageRating: number;
