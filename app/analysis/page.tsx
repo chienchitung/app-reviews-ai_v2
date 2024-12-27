@@ -35,6 +35,7 @@ interface Filters {
   ratings: number[];
   sentiments: string[];  // 這裡存儲 'positive', 'neutral', 'negative'
   categories: string[];
+  companies: string[];  // 新增公司篩選欄位
 }
 
 // 新增點擊外部關閉的 hook
@@ -163,6 +164,7 @@ export default function AnalysisPage() {
 
   // 在 AnalysisPage 組件中添加一個新的 state 來存儲所有可用的分類
   const [allCategories, setAllCategories] = useState<string[]>([]);
+  const [allCompanies, setAllCompanies] = useState<string[]>([]);  // 新增公司列表 state
 
   // 修改 handleAnalyze 函數中的類型定義
   const handleAnalyze = async () => {
@@ -191,15 +193,21 @@ export default function AnalysisPage() {
         throw new Error('數據格式錯誤');
       }
 
-      // 提取所有唯一的分類，添加明確的類型定義
+      // 提取所有唯一的分類
       const uniqueCategories = Array.from(new Set(
         result.data.feedbacks.flatMap((f: { category: string }) => 
           f.category.split(/[,，]/).map((c: string) => c.trim())
         )
-      )) as string[]; // 明確指定類型為 string[]
+      )) as string[];
 
-      // 設置所有可用的分類
+      // 提取所有唯一的公司
+      const uniqueCompanies = Array.from(new Set(
+        result.data.feedbacks.map((f: { company: string }) => f.company)
+      )) as string[];
+
+      // 設置所有可用的分類和公司
       setAllCategories(uniqueCategories);
+      setAllCompanies(uniqueCompanies);
       
       // 保存原始數據
       setOriginalData(result.data);
@@ -303,7 +311,8 @@ export default function AnalysisPage() {
     devices: [],
     ratings: [],
     sentiments: [],
-    categories: []
+    categories: [],
+    companies: []  // 新增公司重置
   });
 
   // 修改 handleFilterChange 函數
@@ -318,6 +327,7 @@ export default function AnalysisPage() {
                          (!newFilters.dateRange.end || date <= new Date(newFilters.dateRange.end));
         const matchDevice = newFilters.devices.length === 0 || newFilters.devices.includes(feedback.device);
         const matchRating = newFilters.ratings.length === 0 || newFilters.ratings.includes(Math.floor(feedback.rating));
+        const matchCompany = newFilters.companies.length === 0 || newFilters.companies.includes(feedback.company);
         
         // 修改情感比對邏輯
         const sentimentMap: { [key: string]: string } = {
@@ -331,7 +341,7 @@ export default function AnalysisPage() {
         const matchCategory = newFilters.categories.length === 0 || 
                             feedback.category.split(/[,，]/).some(cat => newFilters.categories.includes(cat.trim()));
         
-        return matchDate && matchDevice && matchRating && matchSentiment && matchCategory;
+        return matchDate && matchDevice && matchRating && matchSentiment && matchCategory && matchCompany;
       });
 
       // 更新摘要數據
@@ -468,13 +478,14 @@ export default function AnalysisPage() {
 
   // 修改重置篩選函數
   const handleResetFilters = () => {
-    // 重置篩選條件 - 移除日期範圍重置為預設值
+    // 重置篩選條件
     setFilters({
-      dateRange: { start: '', end: '' }, // 清空日期範圍
+      dateRange: { start: '', end: '' },
       devices: [],
       ratings: [],
       sentiments: [],
-      categories: []
+      categories: [],
+      companies: []  // 新增公司重置
     });
     
     // 重置所有圖表和數據到初始狀態
@@ -526,6 +537,13 @@ export default function AnalysisPage() {
     
     return dateString;
   };
+
+  // 在 AnalysisPage 組件中新增狀態
+  const [showCompanyDropdown, setShowCompanyDropdown] = useState(false);
+  const companyDropdownRef = useRef<HTMLDivElement>(null);
+
+  // 使用 useClickOutside hook 關閉下拉選單
+  useClickOutside(companyDropdownRef, () => setShowCompanyDropdown(false));
 
   return (
     <main className="max-w-7xl mx-auto px-4 pt-24 pb-16">
@@ -834,129 +852,192 @@ export default function AnalysisPage() {
             </div>
 
             <div className="space-y-6">
-              {/* 時間範圍篩選 - 改為水平排列 */}
+              {/* 第一行：時間範圍和公司篩選 */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* 時間範圍篩選 */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700">
                   <span className="flex items-center space-x-1">
                     <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    <span>{t('filter.dateRange')}</span>
+                      <span>時間範圍</span>
                   </span>
                 </label>
+                  <div className="relative" ref={datePickerRef}>
+                    <button
+                      type="button"
+                      onClick={() => setShowDatePicker(!showDatePicker)}
+                      className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm text-left focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-700">
+                          {filters.dateRange.start && filters.dateRange.end
+                            ? `${formatDisplayDate(filters.dateRange.start, language)} ${t('to')} ${formatDisplayDate(filters.dateRange.end, language)}`
+                            : '選擇時間範圍'}
+                        </span>
+                        <svg className={`w-5 h-5 text-gray-400 transition-transform ${showDatePicker ? 'rotate-180' : ''}`} 
+                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                </div>
+                    </button>
 
-                <div className="relative" ref={datePickerRef}>
+                    {showDatePicker && (
+                      <div className="absolute z-50 w-full md:w-[500px] mt-1 bg-white rounded-lg shadow-lg border border-gray-200">
+                        <div className="p-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div className="space-y-1">
+                              <label className="block text-xs text-gray-500">開始日期</label>
+                              <input
+                                type="date"
+                                value={filters.dateRange.start}
+                                onChange={(e) => {
+                                  let value = e.target.value;
+                                  value = convertLocaleDateToISO(value);
+                                  const validatedDate = validateDateInput(value);
+                                  if (validatedDate !== value) {
+                                    e.target.value = validatedDate;
+                                  }
+                                  handleFilterChange({
+                                    ...filters,
+                                    dateRange: { ...filters.dateRange, start: validatedDate }
+                                  });
+                                }}
+                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="block text-xs text-gray-500">結束日期</label>
+                              <input
+                                type="date"
+                                value={filters.dateRange.end}
+                                onChange={(e) => {
+                                  let value = e.target.value;
+                                  value = convertLocaleDateToISO(value);
+                                  const validatedDate = validateDateInput(value);
+                                  if (validatedDate !== value) {
+                                    e.target.value = validatedDate;
+                                  }
+                                  handleFilterChange({
+                                    ...filters,
+                                    dateRange: { ...filters.dateRange, end: validatedDate }
+                                  });
+                                }}
+                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                            <button
+                              onClick={() => handleQuickDateSelect('thisMonth')}
+                              className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                            >
+                              本月
+                            </button>
+                            <button
+                              onClick={() => handleQuickDateSelect('lastMonth')}
+                              className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                            >
+                              上月
+                            </button>
+                            <button
+                              onClick={() => handleQuickDateSelect('last7days')}
+                              className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                            >
+                              近 7 天
+                            </button>
+                            <button
+                              onClick={() => handleQuickDateSelect('last14days')}
+                              className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                            >
+                              近 14 天
+                            </button>
+                            <button
+                              onClick={() => handleQuickDateSelect('last30days')}
+                              className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                            >
+                              近 30 天
+                            </button>
+                            <button
+                              onClick={() => handleQuickDateSelect('last3Months')}
+                              className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                            >
+                              近 3 個月
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* 公司篩選器 */}
+                <div className="space-y-2" ref={companyDropdownRef}>
+                  <label className="block text-sm font-medium text-gray-700">
+                    <span className="flex items-center space-x-1">
+                      <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                      </svg>
+                      <span>應用程式</span>
+                    </span>
+                  </label>
+                  <div className="relative">
                   <button
                     type="button"
-                    onClick={() => setShowDatePicker(!showDatePicker)}
+                      onClick={() => setShowCompanyDropdown(!showCompanyDropdown)}
                     className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm text-left focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-700">
-                        {filters.dateRange.start && filters.dateRange.end
-                          ? `${formatDisplayDate(filters.dateRange.start, language)} ${t('to')} ${formatDisplayDate(filters.dateRange.end, language)}`
-                          : t('filter.selectDateRange')}
+                          {filters.companies.length > 0 
+                            ? `已選擇 ${filters.companies.length} 個應用程式`
+                            : '選擇應用程式'}
                       </span>
-                      <svg className={`w-5 h-5 text-gray-400 transition-transform ${showDatePicker ? 'rotate-180' : ''}`} 
+                        <svg className={`w-5 h-5 text-gray-400 transition-transform ${showCompanyDropdown ? 'rotate-180' : ''}`} 
                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                       </svg>
                     </div>
                   </button>
 
-                  {showDatePicker && (
-                    <div className="absolute z-50 w-full md:w-[500px] mt-1 bg-white rounded-lg shadow-lg border border-gray-200">
-                      <div className="p-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                          <div className="space-y-1">
-                            <label className="block text-xs text-gray-500">{t('filter.startDate')}</label>
+                    {showCompanyDropdown && (
+                      <div className="absolute z-50 w-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 max-h-60 overflow-y-auto">
+                        <div className="p-2">
+                          {allCompanies.map(company => (
+                            <div key={company} className="relative flex items-center">
                             <input
-                              type="date"
-                              value={filters.dateRange.start}
-                              onChange={(e) => {
-                                let value = e.target.value;
-                                value = convertLocaleDateToISO(value);
-                                const validatedDate = validateDateInput(value);
-                                if (validatedDate !== value) {
-                                  e.target.value = validatedDate;
-                                }
+                                type="checkbox"
+                                id={`company-${company}`}
+                                checked={filters.companies.includes(company)}
+                                onChange={() => {
+                                  const newCompanies = filters.companies.includes(company)
+                                    ? filters.companies.filter(c => c !== company)
+                                    : [...filters.companies, company];
                                 handleFilterChange({
                                   ...filters,
-                                  dateRange: { ...filters.dateRange, start: validatedDate }
+                                    companies: newCompanies
                                 });
                               }}
-                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                              placeholder={`${t('filter.date.year')}/${t('filter.date.month')}/${t('filter.date.day')}`}
-                            />
-                          </div>
-                          <div className="space-y-1">
-                            <label className="block text-xs text-gray-500">{t('filter.endDate')}</label>
-                            <input
-                              type="date"
-                              value={filters.dateRange.end}
-                              onChange={(e) => {
-                                let value = e.target.value;
-                                value = convertLocaleDateToISO(value);
-                                const validatedDate = validateDateInput(value);
-                                if (validatedDate !== value) {
-                                  e.target.value = validatedDate;
-                                }
-                                handleFilterChange({
-                                  ...filters,
-                                  dateRange: { ...filters.dateRange, end: validatedDate }
-                                });
-                              }}
-                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                              placeholder={`${t('filter.date.year')}/${t('filter.date.month')}/${t('filter.date.day')}`}
-                            />
-                          </div>
+                                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                              />
+                              <label
+                                htmlFor={`company-${company}`}
+                                className="ml-2 block w-full py-2 text-sm text-gray-900 cursor-pointer hover:bg-gray-50"
+                              >
+                                {company}
+                              </label>
                         </div>
-
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                          <button
-                            onClick={() => handleQuickDateSelect('thisMonth')}
-                            className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                          >
-                            {t('filter.thisMonth')}
-                          </button>
-                          <button
-                            onClick={() => handleQuickDateSelect('lastMonth')}
-                            className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                          >
-                            {t('filter.lastMonth')}
-                          </button>
-                          <button
-                            onClick={() => handleQuickDateSelect('last7days')}
-                            className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                          >
-                            {t('filter.last7days')}
-                          </button>
-                          <button
-                            onClick={() => handleQuickDateSelect('last14days')}
-                            className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                          >
-                            {t('filter.last14days')}
-                          </button>
-                          <button
-                            onClick={() => handleQuickDateSelect('last30days')}
-                            className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                          >
-                            {t('filter.last30days')}
-                          </button>
-                          <button
-                            onClick={() => handleQuickDateSelect('last3Months')}
-                            className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                          >
-                            {t('filter.last3Months')}
-                          </button>
-                        </div>
+                          ))}
                       </div>
                     </div>
                   )}
+                  </div>
                 </div>
               </div>
 
-              {/* 其他篩選條件 - 改為按鈕組樣式 */}
+              {/* 第二行：其他篩選條件 */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* 裝置篩選 */}
                 <div className="space-y-2">
@@ -965,7 +1046,7 @@ export default function AnalysisPage() {
                       <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                       </svg>
-                      <span>{t('filter.devices')}</span>
+                      <span>作業系統</span>
                     </span>
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -1000,7 +1081,7 @@ export default function AnalysisPage() {
                       <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.538 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.783.57-1.838-.197-1.538-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                       </svg>
-                      <span>{t('filter.ratings')}</span>
+                      <span>評分</span>
                     </span>
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -1035,7 +1116,7 @@ export default function AnalysisPage() {
                       <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span>{t('filter.sentiment')}</span>
+                      <span>情緒</span>
                     </span>
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -1074,7 +1155,7 @@ export default function AnalysisPage() {
                       <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                       </svg>
-                      <span>{t('filter.categories')}</span>
+                      <span>問題類型</span>
                     </span>
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -1157,6 +1238,20 @@ export default function AnalysisPage() {
                       categories: filters.categories.filter(c => c !== category)
                     })}
                     className="ml-2 hover:text-purple-600"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+              {filters.companies.map(company => (
+                <span key={company} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-indigo-100 text-indigo-800">
+                  <span>應用程式: {company}</span>
+                  <button
+                    onClick={() => handleFilterChange({
+                      ...filters,
+                      companies: filters.companies.filter(c => c !== company)
+                    })}
+                    className="ml-2 hover:text-indigo-600"
                   >
                     ×
                   </button>

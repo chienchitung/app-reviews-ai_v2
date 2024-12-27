@@ -437,7 +437,7 @@ const translations: Translations = {
     'enterprise.success.button': '返回首頁',
 
     // 資料表格相關
-    'table.company': '公司',
+    'table.company': '應用程式',
     'table.date': '日期',
     'table.username': '用戶名稱',
     'table.review': '評論內容',
@@ -896,7 +896,7 @@ const translations: Translations = {
     'enterprise.success.button': 'Back to Home',
 
     // Table
-    'table.company': 'Company',
+    'table.company': 'App Name',
     'table.date': 'Date',
     'table.username': 'Username',
     'table.review': 'Review',
